@@ -16,6 +16,84 @@ void main() {
     baseUrl = 'http://localhost:${imposterServer.port}';
   });
 
+  test('explicit status rejects media supported only by its range', () async {
+    final server = CustomServer(
+      baseUrl: baseUrl,
+      serverConfig: testServerConfig(
+        headers: {'X-Response-Case': 'explicit-media-mismatch'},
+      ),
+    );
+    addTearDown(server.close);
+
+    final result = await StreamingApi(server).getStatusPrecedence();
+
+    final error = requireError(result);
+    expect(error.type, TonikErrorType.decoding);
+    expect(error.error, isA<ResponseDecodingException>());
+    expect(error.response!.statusCode, 200);
+  });
+
+  test('range status rejects media supported only by the default', () async {
+    final server = CustomServer(
+      baseUrl: baseUrl,
+      serverConfig: testServerConfig(
+        headers: {'X-Response-Case': 'range-media-mismatch'},
+      ),
+    );
+    addTearDown(server.close);
+
+    final result = await StreamingApi(server).getStatusPrecedence();
+
+    final error = requireError(result);
+    expect(error.type, TonikErrorType.decoding);
+    expect(error.error, isA<ResponseDecodingException>());
+    expect(error.response!.statusCode, 201);
+  });
+
+  test('explicit status keeps its supported complete response', () async {
+    final server = CustomServer(baseUrl: baseUrl);
+    addTearDown(server.close);
+
+    final result = await StreamingApi(server).getStatusPrecedence();
+
+    expect(
+      requireSuccess(result).value,
+      const GetStatusPrecedenceResponse200(body: 1),
+    );
+  });
+
+  test('range status keeps its supported stream response', () async {
+    final server = CustomServer(
+      baseUrl: baseUrl,
+      serverConfig: testServerConfig(headers: {'X-Response-Case': 'range'}),
+    );
+    addTearDown(server.close);
+
+    final result = await StreamingApi(server).getStatusPrecedence();
+
+    final response =
+        requireSuccess(result).value as GetStatusPrecedenceResponse2XX;
+    expect(
+      await response.body.map((item) => requireSuccess(item).value).toList(),
+      [2],
+    );
+  });
+
+  test('uncovered status keeps its supported default response', () async {
+    final server = CustomServer(
+      baseUrl: baseUrl,
+      serverConfig: testServerConfig(headers: {'X-Response-Case': 'default'}),
+    );
+    addTearDown(server.close);
+
+    final result = await StreamingApi(server).getStatusPrecedence();
+
+    expect(
+      requireSuccess(result).value,
+      const GetStatusPrecedenceResponseDefault(body: 3),
+    );
+  });
+
   test('typed NDJSON preserves request and response metadata', () async {
     final server = CustomServer(
       baseUrl: baseUrl,

@@ -1980,7 +1980,49 @@ paths:
         '204':
           description: OK
 
+  /forward-component-alias:
+    get:
+      operationId: testForwardComponentAlias
+      tags: [query]
+      parameters:
+        - $ref: '#/components/parameters/SharedSortAlias'
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-State:
+              $ref: '#/components/headers/SharedStateAlias'
+  /direct-component:
+    get:
+      operationId: testDirectComponent
+      tags: [query]
+      parameters:
+        - $ref: '#/components/parameters/SharedSort'
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-State:
+              $ref: '#/components/headers/SharedState'
+
 components:
+  parameters:
+    SharedSortAlias:
+      $ref: '#/components/parameters/SharedSort'
+    SharedSort:
+      name: sort
+      in: query
+      required: true
+      schema:
+        type: string
+        enum: [asc, desc]
+  headers:
+    SharedStateAlias:
+      $ref: '#/components/headers/SharedState'
+    SharedState:
+      schema:
+        type: string
+        enum: [ready, pending]
   schemas:
     PartialFilter:
       type: object

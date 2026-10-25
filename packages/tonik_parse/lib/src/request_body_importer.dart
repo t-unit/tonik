@@ -2,6 +2,7 @@ import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
 import 'package:tonik_parse/src/content_type_resolver.dart';
 import 'package:tonik_parse/src/example_importer.dart';
+import 'package:tonik_parse/src/local_json_pointer.dart';
 import 'package:tonik_parse/src/media_type_resolver.dart';
 import 'package:tonik_parse/src/model/encoding.dart';
 import 'package:tonik_parse/src/model/media_type.dart';
@@ -59,14 +60,15 @@ class RequestBodyImporter({
 
     switch (wrapper) {
       case Reference<RequestBody>():
-        if (!wrapper.ref.startsWith('#/components/requestBodies/')) {
+        final pointer = LocalJsonPointer.parse(wrapper.ref);
+        final refName = pointer.componentName('requestBodies');
+        if (refName == null) {
           throw UnimplementedError(
             'Only local request body references are supported, '
             'found ${wrapper.ref}',
           );
         }
 
-        final refName = wrapper.ref.split('/').last;
         final refRequestBody =
             openApiObject.components?.requestBodies?[refName];
 
@@ -99,6 +101,9 @@ class RequestBodyImporter({
         for (final entry in requestBody.content.entries) {
           final rawContentType = entry.key;
           final mediaType = mediaTypeResolver.resolve(entry.value);
+          if (entry.value is Reference<MediaType>) {
+            modelImporter.registerReferencedMediaType(mediaType);
+          }
           final contentType = resolveContentType(
             rawContentType,
             contentTypes: contentTypes,

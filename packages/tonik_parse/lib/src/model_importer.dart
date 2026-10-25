@@ -2,15 +2,26 @@ import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_parse/src/example_importer.dart';
+import 'package:tonik_parse/src/local_json_pointer.dart';
+import 'package:tonik_parse/src/model/components.dart' as parse;
 import 'package:tonik_parse/src/model/discriminator.dart' as parse;
+import 'package:tonik_parse/src/model/encoding.dart' as parse;
+import 'package:tonik_parse/src/model/header.dart' as parse;
+import 'package:tonik_parse/src/model/media_type.dart' as parse;
 import 'package:tonik_parse/src/model/open_api_object.dart';
+import 'package:tonik_parse/src/model/operation.dart' as parse;
+import 'package:tonik_parse/src/model/parameter.dart' as parse;
+import 'package:tonik_parse/src/model/path_item.dart' as parse;
 import 'package:tonik_parse/src/model/reference.dart';
+import 'package:tonik_parse/src/model/request_body.dart' as parse;
+import 'package:tonik_parse/src/model/response.dart' as parse;
 import 'package:tonik_parse/src/model/schema.dart';
 
 class ModelImporter._(
   final ExampleImporter exampleImporter,
   final Map<String, SchemaContentType> _contentMediaTypes,
   final Map<String, Schema> _schemas,
+  final OpenApiObject _openApiObject,
 ) {
   new(
     OpenApiObject openApiObject, {
@@ -20,9 +31,13 @@ class ModelImporter._(
          exampleImporter,
          contentMediaTypes,
          openApiObject.components?.schemas ?? {},
+         openApiObject,
        );
 
-  final Map<String, Schema> _defs = {};
+  final Map<String, Schema> _schemaReferences = {};
+  final Map<Schema, Schema> _schemaAliases = {};
+  final Set<Schema> _nestedReferenceSchemas = {};
+  final Map<Schema, Model> _nestedReferenceModels = {};
   final Set<String> _resolving = {};
   final Map<String, AliasModel> _placeholders = {};
 
@@ -46,6 +61,8 @@ class ModelImporter._(
   final Map<Model, Schema> _modelSchemas = {};
 
   Model? _findNamedModel(String? name, [Schema? schema]) {
+    final referenced = _nestedReferenceModels[schema];
+    if (referenced != null) return referenced;
     if (name == null) return null;
     final target = schema ?? _schemas[name];
     return _modelsByName[name]?.firstWhereOrNull(
@@ -53,9 +70,19 @@ class ModelImporter._(
     );
   }
 
+  Schema _canonicalSchema(Schema schema) => _schemaAliases[schema] ?? schema;
+
+  void _rememberSchemaModel(Model model, Schema schema) {
+    final canonical = _canonicalSchema(schema);
+    _modelSchemas[model] = canonical;
+    if (_nestedReferenceSchemas.contains(canonical)) {
+      _nestedReferenceModels[canonical] = model;
+    }
+  }
+
   void _registerModel(Model model, [Schema? schema]) {
-    if (schema != null) _modelSchemas[model] = schema;
-    if (!models.add(model)) return;
+    if (schema != null) _rememberSchemaModel(model, schema);
+    models.add(model);
     if (model is NamedModel) {
       final name = model.name;
       if (name != null) {
@@ -66,7 +93,10 @@ class ModelImporter._(
 
   void _removeModel(Model model) {
     if (!models.remove(model)) return;
-    _modelSchemas.remove(model);
+    final schema = _modelSchemas.remove(model);
+    if (identical(_nestedReferenceModels[schema], model)) {
+      _nestedReferenceModels.remove(schema);
+    }
     if (model is NamedModel) {
       final name = model.name;
       if (name != null) {
@@ -102,7 +132,12 @@ class ModelImporter._(
     _propertyModels.clear();
     _additionalProperties.clear();
     _populatedComposites.clear();
-    _collectAllDefs();
+    _schemaReferences.clear();
+    _schemaAliases.clear();
+    _nestedReferenceSchemas.clear();
+    _nestedReferenceModels.clear();
+    _resolving.clear();
+    _indexSchemas(_openApiObject, const []);
 
     final context = rootContext;
 
@@ -134,12 +169,10 @@ class ModelImporter._(
     if (schema.ref != null) {
       // Direct self-reference check.
       final ref = schema.ref!;
-      if (ref.startsWith('#/components/schemas/')) {
-        final refName = ref.split('/').last;
-        if (name == refName) {
-          // Will be caught during pass 2 with proper error.
-          return;
-        }
+      if (!isExternalReference(ref) &&
+          name == LocalJsonPointer.parse(ref).componentName('schemas')) {
+        // Will be caught during pass 2 with proper error.
+        return;
       }
 
       final aliasModel = AliasModel(
@@ -152,8 +185,8 @@ class ModelImporter._(
         defaultValue: schema.rawDefault,
         examples: const [],
         nameOverride: null,
-        isReadOnly: false,
-        isWriteOnly: false,
+        isReadOnly: schema.isReadOnly ?? false,
+        isWriteOnly: schema.isWriteOnly ?? false,
       );
       _logModelAdded(aliasModel);
       _registerModel(aliasModel, schema);
@@ -321,8 +354,8 @@ class ModelImporter._(
           defaultValue: schema.rawDefault,
           examples: const [],
           nameOverride: null,
-          description: null,
-          isDeprecated: false,
+          description: schema.description,
+          isDeprecated: schema.isDeprecated ?? false,
         );
         _logModelAdded(aliasModel);
         _registerModel(aliasModel, schema);
@@ -345,7 +378,7 @@ class ModelImporter._(
         content: AnyModel(context: context.push('array')),
         context: context,
         name: name,
-        isNullable: schema.isNullable ?? false,
+        isNullable: schema.isNullable ?? hasNullType,
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
         examples: const [],
@@ -540,7 +573,6 @@ class ModelImporter._(
 
     if (types.length > 1) {
       _populateMultiTypeShell(
-        name,
         schema,
         hasNullType,
         context,
@@ -589,36 +621,10 @@ class ModelImporter._(
   ) {
     final ref = schema.ref!;
 
-    if (!isExternalReference(ref) && ref.contains(r'/$defs/')) {
-      // For $defs references, delegate to the existing resolution logic.
-      _removeModel(shell);
-      final model = _resolveDefsReference(name, schema, context);
-      if (model is AliasModel && !identical(model, shell)) {
-        shell
-          ..model = model.model
-          ..description = model.description
-          ..isDeprecated = model.isDeprecated
-          ..isNullable = model.isNullable
-          ..isReadOnly = model.isReadOnly
-          ..isWriteOnly = model.isWriteOnly;
-      }
-      if (_findNamedModel(name, schema) == null) {
-        _registerModel(shell, schema);
-      }
-      return;
-    }
-
-    final refModel = _resolveReferenceTarget(ref, name: name);
-
     // Structural `$ref` siblings are represented as an allOf wrapper.
     if (_hasStructuralSiblings(schema)) {
       _removeModel(shell);
-      final allOfModel = _mergeRefWithStructuralSiblings(
-        name,
-        refModel,
-        schema,
-        context,
-      );
+      final allOfModel = _mergeRefWithStructuralSiblings(name, schema, context);
       // Carry any examples assigned to the shell over to the replacement so
       // they survive the swap.
       applyExamples(allOfModel, shell.examples);
@@ -630,13 +636,17 @@ class ModelImporter._(
       return;
     }
 
+    final refModel = _resolveReferenceTarget(ref, name: name);
+
     // Bare `$ref` cycles keep the AnyModel terminal to avoid an infinite
     // alias chain.
     if (_wouldCreateAliasCycle(shell, refModel)) {
       shell
         ..description = schema.description
         ..isDeprecated = (schema.isDeprecated ?? false)
-        ..isNullable = (schema.isNullable ?? schema.hasNullType);
+        ..isNullable = (schema.isNullable ?? schema.hasNullType)
+        ..isReadOnly = (schema.isReadOnly ?? false)
+        ..isWriteOnly = (schema.isWriteOnly ?? false);
       return;
     }
 
@@ -644,7 +654,9 @@ class ModelImporter._(
       ..model = refModel
       ..description = schema.description
       ..isDeprecated = (schema.isDeprecated ?? false)
-      ..isNullable = (schema.isNullable ?? schema.hasNullType);
+      ..isNullable = (schema.isNullable ?? schema.hasNullType)
+      ..isReadOnly = (schema.isReadOnly ?? false)
+      ..isWriteOnly = (schema.isWriteOnly ?? false);
   }
 
   /// Attaches schema-level [examples] to an already-constructed [model].
@@ -837,27 +849,22 @@ class ModelImporter._(
 
   /// Resolves a sub-model for a composite (oneOf/allOf/anyOf) shell.
   ///
-  /// If the sub-schema is a `$ref` to a named composite model that already
-  /// (transitively) contains [currentShell] in its composite sub-models,
+  /// If the resolved model already (transitively) contains [currentShell]
+  /// in its composite sub-models,
   /// returns `null` to skip the back-edge and prevent a cycle.
   Model? _resolveCompositeSubModel(
     Schema schema,
     Context context,
     Model currentShell,
   ) {
-    final ref = schema.ref;
-    if (ref != null) {
-      final refModel = _resolveReferenceForProperty(ref, context);
-      if (_compositeContains(refModel, currentShell, <Model>{})) {
-        log.fine(
-          'Skipping back-edge to $ref during composite population '
-          'to prevent cycle.',
-        );
-        return null;
-      }
+    final model = _resolveSchemaRef(null, schema, context);
+    if (_compositeContains(model, currentShell, <Model>{})) {
+      log.fine(
+        'Skipping back-edge during composite population to prevent cycle.',
+      );
+      return null;
     }
-
-    return _resolveSchemaRef(null, schema, context);
+    return model;
   }
 
   /// Returns true if [model] transitively contains [target] in its
@@ -889,31 +896,51 @@ class ModelImporter._(
 
   /// Populates a multi-type OneOfModel shell.
   void _populateMultiTypeShell(
-    String name,
     Schema schema,
     bool hasNullType,
     Context context,
     OneOfModel shell,
   ) {
-    // Remove the shell so _parseMultiType can create the real model.
-    _removeModel(shell);
-    final oneOfModel = _parseMultiType(
-      schema.nonNullTypes,
-      schema,
-      hasNullType,
-      context,
-      name,
-    );
+    final models = schema.nonNullTypes.map((type) {
+      final singleTypeSchema = Schema(
+        ref: null,
+        type: [type],
+        format: schema.format,
+        required: schema.required,
+        enumerated: schema.enumerated,
+        allOf: schema.allOf,
+        anyOf: schema.anyOf,
+        oneOf: schema.oneOf,
+        not: schema.not,
+        items: schema.items,
+        properties: schema.properties,
+        description: schema.description,
+        isNullable: schema.isNullable ?? hasNullType,
+        discriminator: schema.discriminator,
+        isDeprecated: schema.isDeprecated,
+        uniqueItems: schema.uniqueItems,
+        xDartName: schema.xDartName,
+        xDartEnum: schema.xDartEnum,
+        defs: schema.defs,
+        contentEncoding: schema.contentEncoding,
+        contentMediaType: schema.contentMediaType,
+        contentSchema: schema.contentSchema,
+        additionalProperties: schema.additionalProperties,
+        isReadOnly: schema.isReadOnly,
+        isWriteOnly: schema.isWriteOnly,
+        rawDefault: schema.rawDefault,
+        example: schema.example,
+        examples: schema.examples,
+      );
+      return (
+        discriminatorValue: null,
+        model: _parseSchema(null, singleTypeSchema, context),
+      );
+    });
 
-    // Transfer the resolved data into the shell and restore it.
-    shell
-      ..models = oneOfModel.models
-      ..discriminator = oneOfModel.discriminator;
-
-    // Remove the duplicate created by _parseMultiType.
-    _removeModel(oneOfModel);
-    if (_findNamedModel(name, schema) == null) {
-      _registerModel(shell, schema);
+    shell.models = models.toList();
+    for (final member in shell.models) {
+      _addModelToSet(member.model);
     }
   }
 
@@ -1063,27 +1090,34 @@ class ModelImporter._(
     return model;
   }
 
-  Model importPropertySchema(Schema schema, Context context) =>
-      _propertyModels[(schema, context)] ??= _resolveSchemaRefForProperty(
-        schema,
-        context,
-      );
+  Model importPropertySchema(Schema schema, Context context) {
+    final canonical = _canonicalSchema(schema);
+    return _propertyModels[(canonical, context)] ??=
+        _resolveSchemaRefForProperty(canonical, context);
+  }
 
   /// Resolves a schema that may have a $ref field.
   Model _resolveSchemaRef(String? name, Schema schema, Context context) {
-    if (schema.ref != null) {
-      return _resolveReference(name, schema, context);
+    final canonical = _canonicalSchema(schema);
+    final existing = _nestedReferenceModels[canonical];
+    if (existing != null) return existing;
+    if (canonical.ref != null) {
+      return _resolveReference(name, canonical, context);
     }
-    return _parseSchema(name, schema, context);
+    return _parseSchema(name, canonical, context);
   }
 
   Model _resolveSchemaRefForProperty(Schema schema, Context context) {
+    final existing = _nestedReferenceModels[schema];
+    if (existing != null) return existing;
     if (schema.ref != null) {
       if (_hasStructuralSiblings(schema)) {
-        return _mergeRefWithStructuralSiblingsForProperty(schema, context);
+        return _mergeRefWithStructuralSiblings(null, schema, context);
       }
-      final refModel = _resolveReferenceForProperty(schema.ref!, context);
-      if (schema.rawDefault != null) {
+      final refModel = _resolveReferenceTarget(schema.ref!);
+      if (schema.rawDefault != null ||
+          (schema.isReadOnly ?? false) ||
+          (schema.isWriteOnly ?? false)) {
         final aliasModel = AliasModel(
           model: refModel,
           context: context,
@@ -1094,10 +1128,10 @@ class ModelImporter._(
           examples: exampleImporter.fromSchema(schema),
           name: null,
           nameOverride: null,
-          isReadOnly: false,
-          isWriteOnly: false,
+          isReadOnly: schema.isReadOnly ?? false,
+          isWriteOnly: schema.isWriteOnly ?? false,
         );
-        _addModelToSet(aliasModel);
+        _addModelToSet(aliasModel, schema);
         return aliasModel;
       }
       return refModel;
@@ -1105,94 +1139,76 @@ class ModelImporter._(
     return _parseSchema(null, schema, context);
   }
 
-  Model _mergeRefWithStructuralSiblingsForProperty(
-    Schema schema,
-    Context context,
-  ) {
-    final ref = schema.ref!;
-
-    final refModel = _resolveReferenceForProperty(ref, context);
-
-    final modelContext = context.push('allOf');
-    final modelsToMerge = <Model>[refModel];
-
-    if (schema.allOf != null) {
-      for (final allOfSchema in schema.allOf!) {
-        modelsToMerge.add(_resolveSchemaRef(null, allOfSchema, modelContext));
-      }
-    }
-
-    if (schema.properties != null) {
-      final inlineClass = _parseClassModel(null, schema, modelContext);
-      modelsToMerge.add(inlineClass);
-    }
-
-    if (schema.oneOf != null) {
-      final oneOfModel = _parseOneOf(null, schema, modelContext);
-      modelsToMerge.add(oneOfModel);
-    }
-
-    if (schema.anyOf != null) {
-      final anyOfModel = _parseAnyOf(null, schema, modelContext);
-      modelsToMerge.add(anyOfModel);
-    }
-
-    final allOfModel = AllOfModel(
-      defaultValue: schema.rawDefault,
-      models: modelsToMerge,
-      context: modelContext,
-      isDeprecated: false,
-      examples: const [],
-      name: null,
-      nameOverride: null,
-      description: null,
-      additionalPropertiesPolicy: null,
-      isNullable: false,
-      isReadOnly: false,
-      isWriteOnly: false,
-    );
-
-    _addModelToSet(allOfModel, schema);
-    return allOfModel;
-  }
-
-  Model _resolveReferenceForProperty(String ref, Context context) {
-    if (!isExternalReference(ref) && ref.contains(r'/$defs/')) {
-      return _resolveDefsTarget(ref);
-    }
-
-    return _resolveReferenceTarget(ref);
-  }
-
   Model _resolveReferenceTarget(String ref, {String? name}) {
-    if (!ref.startsWith('#/components/schemas/')) {
-      throw UnimplementedError(
-        'Only local schema references are supported, found $ref',
-      );
+    final pointer = LocalJsonPointer.parse(ref);
+    final refName = pointer.componentName('schemas');
+    if (refName != null) {
+      if (name == refName) {
+        throw ArgumentError(
+          'Schema $name has a direct self-reference which is not supported',
+        );
+      }
+      final refSchema = _schemas[refName];
+      if (refSchema == null) {
+        throw ArgumentError('Schema $ref not found');
+      }
+      return _findNamedModel(refName, refSchema) ??
+          _resolveWithCycleCheck(refName, refSchema);
     }
-    final refName = ref.split('/').last;
-    if (name == refName) {
-      throw ArgumentError(
-        'Schema $name has a direct self-reference which is not supported',
-      );
-    }
-    final refSchema = _schemas[refName];
-    if (refSchema == null) {
-      throw ArgumentError('Schema $ref not found');
-    }
-    return _findNamedModel(refName) ??
-        _resolveWithCycleCheck(refName, refSchema);
+    return _resolveNestedSchemaTarget(pointer, _schemaForPointer(pointer));
   }
 
-  Model _resolveDefsTarget(String ref) {
-    final defSchema = _defs[ref];
-    if (defSchema == null) {
-      throw ArgumentError('\$defs reference $ref not found');
-    }
-
-    final defName = ref.split('/').last;
-    final existing = _findNamedModel(defName, defSchema);
+  Schema _schemaForPointer(LocalJsonPointer pointer) {
+    final existing = _schemaReferences[pointer.reference];
     if (existing != null) return existing;
+    final source = _openApiObject.source;
+    if (source == null) {
+      throw ArgumentError('Schema ${pointer.reference} not found');
+    }
+    final schema = Schema.fromJson(pointer.resolve(source));
+    _indexSchemas(schema, pointer.tokens);
+    return schema;
+  }
+
+  Model? _existingSchemaModel(Schema schema) =>
+      _nestedReferenceModels[schema] ??
+      _modelSchemas.entries
+          .where((entry) => identical(entry.value, schema))
+          .lastOrNull
+          ?.key;
+
+  Model _resolveNestedSchemaTarget(LocalJsonPointer pointer, Schema schema) {
+    final ref = pointer.reference;
+    final name = pointer.tokens.lastOrNull;
+    final modelName = name == null || name.isEmpty ? 'schema' : name;
+    final context = pointer.tokens.isEmpty
+        ? Context.initial()
+        : Context.initial().pushAll(
+            pointer.tokens.map((token) => token.isEmpty ? 'schema' : token),
+          );
+    var existing = _existingSchemaModel(schema);
+    _nestedReferenceSchemas.add(schema);
+    if (existing is PrimitiveModel ||
+        existing is AnyModel ||
+        existing is NeverModel) {
+      existing = _annotateSchemaValue(modelName, existing!, schema, context);
+    }
+    // Referenced collections need typedef names for recursive type recovery.
+    // Promote the existing shell so owner properties keep the same identity.
+    switch (existing) {
+      case ListModel(name: null):
+        existing.name = modelName;
+        _registerModel(existing, schema);
+      case MapModel(name: null):
+        existing.name = modelName;
+        _registerModel(existing, schema);
+      default:
+        break;
+    }
+    if (existing != null) {
+      _nestedReferenceModels[schema] = existing;
+      return existing;
+    }
 
     if (_resolving.contains(ref)) {
       return _placeholders.putIfAbsent(
@@ -1201,8 +1217,8 @@ class ModelImporter._(
           // Resolution placeholders must delegate to the registered target,
           // rather than introduce a separate generated type.
           name: null,
-          model: AnyModel(context: _contextFromDefsPath(ref)),
-          context: _contextFromDefsPath(ref),
+          model: AnyModel(context: context),
+          context: context,
           defaultValue: null,
           examples: const [],
           nameOverride: null,
@@ -1217,63 +1233,16 @@ class ModelImporter._(
 
     _resolving.add(ref);
     try {
-      final refModel = _resolveSchemaRef(
-        defName,
-        defSchema,
-        _contextFromDefsPath(ref),
-      );
+      final model = _resolveSchemaRef(modelName, schema, context);
+      _nestedReferenceModels[schema] = model;
       final placeholder = _placeholders.remove(ref);
-      if (placeholder != null &&
-          !_wouldCreateAliasCycle(placeholder, refModel)) {
-        placeholder.model = refModel;
+      if (placeholder != null && !_wouldCreateAliasCycle(placeholder, model)) {
+        placeholder.model = model;
       }
-      return refModel;
+      return model;
     } finally {
       _resolving.remove(ref);
     }
-  }
-
-  Model _resolveDefsReference(String? name, Schema schema, Context context) {
-    final refModel = _resolveDefsTarget(schema.ref!);
-
-    if (_hasStructuralSiblings(schema)) {
-      return _mergeRefWithStructuralSiblings(name, refModel, schema, context);
-    }
-
-    if (name != null || hasAnnotationSiblings(schema)) {
-      if (name != null) {
-        final existing = _findNamedModel(name, schema);
-        if (existing != null) {
-          return existing;
-        }
-      }
-
-      final aliasModel = AliasModel(
-        name: name,
-        model: refModel,
-        context: context,
-        description: schema.description,
-        isDeprecated: schema.isDeprecated ?? false,
-        isNullable: schema.isNullable ?? schema.hasNullType,
-        defaultValue: schema.rawDefault,
-        examples: exampleImporter.fromSchema(schema),
-        nameOverride: null,
-        isReadOnly: false,
-        isWriteOnly: false,
-      );
-
-      _logModelAdded(aliasModel);
-      _registerModel(aliasModel, schema);
-
-      return aliasModel;
-    }
-
-    return refModel;
-  }
-
-  Context _contextFromDefsPath(String ref) {
-    final parts = ref.substring(2).split('/'); // Remove '#/' prefix.
-    return Context.initial().pushAll(parts);
   }
 
   /// Resolves a schema ref with cycle detection.
@@ -1346,6 +1315,8 @@ class ModelImporter._(
         (schema.isDeprecated ?? false) ||
         (schema.isNullable ?? false) ||
         schema.hasNullType ||
+        (schema.isReadOnly ?? false) ||
+        (schema.isWriteOnly ?? false) ||
         schema.rawDefault != null;
   }
 
@@ -1359,18 +1330,14 @@ class ModelImporter._(
   Model _resolveReference(String? name, Schema schema, Context context) {
     final ref = schema.ref!;
 
-    if (!isExternalReference(ref) && ref.contains(r'/$defs/')) {
-      return _resolveDefsReference(name, schema, context);
+    if (_hasStructuralSiblings(schema)) {
+      return _mergeRefWithStructuralSiblings(name, schema, context);
     }
 
     final refModel = _resolveReferenceTarget(
       ref,
       name: identical(_schemas[name], schema) ? name : null,
     );
-
-    if (_hasStructuralSiblings(schema)) {
-      return _mergeRefWithStructuralSiblings(name, refModel, schema, context);
-    }
 
     if (name != null || hasAnnotationSiblings(schema)) {
       if (name != null) {
@@ -1390,8 +1357,8 @@ class ModelImporter._(
         defaultValue: schema.rawDefault,
         examples: exampleImporter.fromSchema(schema),
         nameOverride: null,
-        isReadOnly: false,
-        isWriteOnly: false,
+        isReadOnly: schema.isReadOnly ?? false,
+        isWriteOnly: schema.isWriteOnly ?? false,
       );
 
       _logModelAdded(aliasModel);
@@ -1405,38 +1372,14 @@ class ModelImporter._(
 
   AllOfModel _mergeRefWithStructuralSiblings(
     String? name,
-    Model refModel,
     Schema schema,
     Context context,
   ) {
     final modelContext = context.push(name ?? 'allOf');
-    final modelsToMerge = <Model>[refModel];
-
-    if (schema.allOf != null) {
-      for (final allOfSchema in schema.allOf!) {
-        modelsToMerge.add(_resolveSchemaRef(null, allOfSchema, modelContext));
-      }
-    }
-
-    if (schema.properties != null) {
-      final inlineClass = _parseClassModel(null, schema, modelContext);
-      modelsToMerge.add(inlineClass);
-    }
-
-    if (schema.oneOf != null) {
-      final oneOfModel = _parseOneOf(null, schema, modelContext);
-      modelsToMerge.add(oneOfModel);
-    }
-
-    if (schema.anyOf != null) {
-      final anyOfModel = _parseAnyOf(null, schema, modelContext);
-      modelsToMerge.add(anyOfModel);
-    }
-
-    final allOfModel = AllOfModel(
+    final model = AllOfModel(
       defaultValue: schema.rawDefault,
       name: name,
-      models: modelsToMerge,
+      models: <Model>[],
       context: modelContext,
       description: schema.description,
       isDeprecated: schema.isDeprecated ?? false,
@@ -1447,9 +1390,45 @@ class ModelImporter._(
       nameOverride: null,
       additionalPropertiesPolicy: null,
     );
+    _addModelToSet(model, schema);
 
-    _addModelToSet(allOfModel, schema);
-    return allOfModel;
+    final members = <Model>[];
+    final base = _resolveReferenceTarget(
+      schema.ref!,
+      name: identical(_schemas[name], schema) ? name : null,
+    );
+    if (!_compositeContains(base, model, <Model>{})) members.add(base);
+    if (schema.allOf != null) {
+      for (final member in schema.allOf!) {
+        final resolved = _resolveCompositeSubModel(member, modelContext, model);
+        if (resolved != null) members.add(resolved);
+      }
+    }
+    if (schema.properties != null) {
+      members.add(
+        _parseClassModel(null, schema, modelContext, cacheSchema: false),
+      );
+    }
+    if (schema.oneOf != null) {
+      final member = _parseOneOf(
+        null,
+        schema,
+        modelContext,
+        cacheSchema: false,
+      );
+      if (!_compositeContains(member, model, <Model>{})) members.add(member);
+    }
+    if (schema.anyOf != null) {
+      final member = _parseAnyOf(
+        null,
+        schema,
+        modelContext,
+        cacheSchema: false,
+      );
+      if (!_compositeContains(member, model, <Model>{})) members.add(member);
+    }
+    model.models = members;
+    return model;
   }
 
   Model _parseSchema(String? name, Schema schema, Context context) {
@@ -1461,9 +1440,10 @@ class ModelImporter._(
     if (schema.isBooleanSchema != null ||
         _isEmptySchema(schema) ||
         _isUnsupportedTypelessSchema(schema)) {
-      return schema.isBooleanSchema != false
+      final model = schema.isBooleanSchema != false
           ? AnyModel(context: context)
           : NeverModel(context: context, isNullable: false);
+      return _annotateSchemaValue(name, model, schema, context);
     }
 
     if (schema.allOf != null) {
@@ -1483,38 +1463,41 @@ class ModelImporter._(
     final types = _schemaTypes(schema);
 
     if (hasNullType && types.isEmpty) {
-      return NeverModel(context: context, isNullable: true);
+      return _annotateSchemaValue(
+        name,
+        NeverModel(context: context, isNullable: true),
+        schema,
+        context,
+      );
     }
 
     if (types.length > 1) {
-      return _parseMultiType(types, schema, hasNullType, context, name);
+      return _parseMultiType(schema, hasNullType, context, name);
     }
 
     if (isOpenMapSchema(schema, types)) {
       final ap = schema.additionalProperties;
       final mapContext = context.push(name ?? 'map');
-      Model valueModel;
-      var isValueNullable = false;
-      if (ap is Schema && !_isEmptySchema(ap)) {
-        valueModel = _resolveSchemaRef(null, ap, mapContext);
-        isValueNullable = ap.isNullable ?? ap.hasNullType;
-      } else {
-        valueModel = AnyModel(context: mapContext);
-      }
       final model = MapModel(
-        valueModel: valueModel,
+        valueModel: AnyModel(context: mapContext),
         context: context,
         name: name,
         isNullable: schema.isNullable ?? hasNullType,
-        isValueNullable: isValueNullable,
+        isValueNullable: false,
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
         examples: exampleImporter.fromSchema(schema),
         nameOverride: null,
       );
+      _rememberSchemaModel(model, schema);
       if (name != null) {
         _logModelAdded(model);
         _registerModel(model, schema);
+      }
+      if (ap is Schema && !_isEmptySchema(ap)) {
+        model
+          ..valueModel = _resolveSchemaRef(null, ap, mapContext)
+          ..isValueNullable = ap.isNullable ?? ap.hasNullType;
       }
       return model;
     }
@@ -1563,21 +1546,7 @@ class ModelImporter._(
     };
 
     if (model is PrimitiveModel && name != null) {
-      model = AliasModel(
-        name: name,
-        model: model,
-        context: context,
-        isNullable: schema.isNullable ?? hasNullType,
-        isReadOnly: schema.isReadOnly ?? false,
-        isWriteOnly: schema.isWriteOnly ?? false,
-        defaultValue: schema.rawDefault,
-        examples: exampleImporter.fromSchema(schema),
-        nameOverride: null,
-        description: null,
-        isDeprecated: false,
-      );
-      _logModelAdded(model);
-      _registerModel(model, schema);
+      model = _annotateSchemaValue(name, model, schema, context);
     }
 
     if (model is EnumModel &&
@@ -1586,7 +1555,41 @@ class ModelImporter._(
       _registerModel(model, schema);
     }
 
+    _rememberSchemaModel(model, schema);
     return model;
+  }
+
+  Model _annotateSchemaValue(
+    String? name,
+    Model model,
+    Schema schema,
+    Context context,
+  ) {
+    final isNullable = schema.isNullable ?? schema.hasNullType;
+    if (name == null &&
+        schema.rawDefault == null &&
+        !(schema.isReadOnly ?? false) &&
+        !(schema.isWriteOnly ?? false) &&
+        (!isNullable || model.isEffectivelyNullable)) {
+      _rememberSchemaModel(model, schema);
+      return model;
+    }
+    final alias = AliasModel(
+      name: name,
+      model: model,
+      context: context,
+      isNullable: isNullable,
+      isReadOnly: schema.isReadOnly ?? false,
+      isWriteOnly: schema.isWriteOnly ?? false,
+      defaultValue: schema.rawDefault,
+      examples: exampleImporter.fromSchema(schema),
+      nameOverride: null,
+      description: schema.description,
+      isDeprecated: schema.isDeprecated ?? false,
+    );
+    _logModelAdded(alias);
+    _registerModel(alias, schema);
+    return alias;
   }
 
   Model _resolveContentEncodedModel(Schema schema, Context context) {
@@ -1608,52 +1611,14 @@ class ModelImporter._(
       };
 
   OneOfModel _parseMultiType(
-    List<String> types,
     Schema schema,
     bool hasNullType,
     Context context,
     String? name,
   ) {
-    final models = types.map((type) {
-      final singleTypeSchema = Schema(
-        ref: null,
-        type: [type],
-        format: schema.format,
-        required: schema.required,
-        enumerated: schema.enumerated,
-        allOf: schema.allOf,
-        anyOf: schema.anyOf,
-        oneOf: schema.oneOf,
-        not: schema.not,
-        items: schema.items,
-        properties: schema.properties,
-        description: schema.description,
-        isNullable: schema.isNullable ?? hasNullType,
-        discriminator: schema.discriminator,
-        isDeprecated: schema.isDeprecated,
-        uniqueItems: schema.uniqueItems,
-        xDartName: schema.xDartName,
-        xDartEnum: schema.xDartEnum,
-        defs: schema.defs,
-        contentEncoding: schema.contentEncoding,
-        contentMediaType: schema.contentMediaType,
-        contentSchema: schema.contentSchema,
-        additionalProperties: schema.additionalProperties,
-        isReadOnly: schema.isReadOnly,
-        isWriteOnly: schema.isWriteOnly,
-        rawDefault: schema.rawDefault,
-        example: schema.example,
-        examples: schema.examples,
-      );
-      return (
-        discriminatorValue: null,
-        model: _parseSchema(null, singleTypeSchema, context),
-      );
-    });
-
     final oneOfModel = OneOfModel(
       defaultValue: schema.rawDefault,
-      models: models.toList(),
+      models: <DiscriminatedModel>[],
       name: name,
       context: context,
       description: schema.description,
@@ -1663,10 +1628,11 @@ class ModelImporter._(
       examples: exampleImporter.fromSchema(schema),
       nameOverride: null,
       discriminator: null,
-      isNullable: false,
+      isNullable: schema.isNullable ?? hasNullType,
     );
 
     _addModelToSet(oneOfModel, schema);
+    _populateMultiTypeShell(schema, hasNullType, context, oneOfModel);
     return oneOfModel;
   }
 
@@ -1683,7 +1649,7 @@ class ModelImporter._(
       content: AnyModel(context: modelContext),
       context: context,
       name: name,
-      isNullable: schema.isNullable ?? false,
+      isNullable: schema.isNullable ?? schema.hasNullType,
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
       examples: exampleImporter.fromSchema(schema),
@@ -1691,7 +1657,10 @@ class ModelImporter._(
       isContentNullable: false,
     );
 
-    if (name != null && _findNamedModel(name, schema) == null) {
+    final register = name != null && _findNamedModel(name, schema) == null;
+    _rememberSchemaModel(listModel, schema);
+
+    if (register) {
       _logModelAdded(listModel);
       _registerModel(listModel, schema);
     }
@@ -1720,10 +1689,7 @@ class ModelImporter._(
       context: modelContext,
       name: name,
       description: schema.description,
-      additionalPropertiesPolicy: importAdditionalProperties(
-        schema,
-        modelContext,
-      ),
+      additionalPropertiesPolicy: null,
       isNullable: schema.isNullable ?? false,
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
@@ -1736,11 +1702,20 @@ class ModelImporter._(
       _registerModel(allOfModel, schema);
     }
 
-    final resolvedModels = schema.allOf!
-        .map(
-          (allOfSchema) => _resolveSchemaRef(null, allOfSchema, modelContext),
-        )
-        .toList();
+    allOfModel.additionalPropertiesPolicy = importAdditionalProperties(
+      schema,
+      modelContext,
+    );
+
+    final resolvedModels = <Model>[];
+    for (final allOfSchema in schema.allOf!) {
+      final member = _resolveCompositeSubModel(
+        allOfSchema,
+        modelContext,
+        allOfModel,
+      );
+      if (member != null) resolvedModels.add(member);
+    }
 
     allOfModel.models = resolvedModels;
 
@@ -1749,10 +1724,11 @@ class ModelImporter._(
 
   void _addModelToSet(Model model, [Schema? schema]) {
     if (model is! PrimitiveModel) {
+      final alreadyRegistered = models.contains(model);
       _logModelAdded(model);
       _registerModel(model, schema);
 
-      if (model is OneOfModel) {
+      if (model is OneOfModel && !alreadyRegistered) {
         for (final nestedModel in model.models) {
           _addModelToSet(nestedModel.model);
         }
@@ -1760,7 +1736,12 @@ class ModelImporter._(
     }
   }
 
-  OneOfModel _parseOneOf(String? name, Schema schema, Context context) {
+  OneOfModel _parseOneOf(
+    String? name,
+    Schema schema,
+    Context context, {
+    bool cacheSchema = true,
+  }) {
     final modelContext = context.push(name ?? 'oneOf');
     final alternatives = schema.oneOf!;
 
@@ -1786,7 +1767,7 @@ class ModelImporter._(
 
     if (name == null || _findNamedModel(name, schema) == null) {
       _logModelAdded(oneOfModel);
-      _registerModel(oneOfModel, schema);
+      _registerModel(oneOfModel, cacheSchema ? schema : null);
     }
 
     final resolvedModels = <DiscriminatedModel>[];
@@ -1795,13 +1776,20 @@ class ModelImporter._(
         oneOfModel.isNullable = true;
         continue;
       }
-      resolvedModels.add((
-        discriminatorValue: _getDiscriminatorValue(
-          discriminator: effectiveDiscriminator,
-          innerSchema: oneOfSchema,
-        ),
-        model: _resolveSchemaRef(null, oneOfSchema, modelContext),
-      ));
+      final member = _resolveCompositeSubModel(
+        oneOfSchema,
+        modelContext,
+        oneOfModel,
+      );
+      if (member != null) {
+        resolvedModels.add((
+          discriminatorValue: _getDiscriminatorValue(
+            discriminator: effectiveDiscriminator,
+            innerSchema: oneOfSchema,
+          ),
+          model: member,
+        ));
+      }
     }
 
     oneOfModel.models = resolvedModels;
@@ -1814,7 +1802,12 @@ class ModelImporter._(
     return oneOfModel;
   }
 
-  AnyOfModel _parseAnyOf(String? name, Schema schema, Context context) {
+  AnyOfModel _parseAnyOf(
+    String? name,
+    Schema schema,
+    Context context, {
+    bool cacheSchema = true,
+  }) {
     final modelContext = context.push(name ?? 'anyOf');
     final alternatives = schema.anyOf!;
 
@@ -1840,7 +1833,7 @@ class ModelImporter._(
 
     if (name == null || _findNamedModel(name, schema) == null) {
       _logModelAdded(anyOfModel);
-      _registerModel(anyOfModel, schema);
+      _registerModel(anyOfModel, cacheSchema ? schema : null);
     }
 
     final resolvedModels = <DiscriminatedModel>[];
@@ -1849,13 +1842,20 @@ class ModelImporter._(
         anyOfModel.isNullable = true;
         continue;
       }
-      resolvedModels.add((
-        discriminatorValue: _getDiscriminatorValue(
-          discriminator: effectiveDiscriminator,
-          innerSchema: anyOfSchema,
-        ),
-        model: _resolveSchemaRef(null, anyOfSchema, modelContext),
-      ));
+      final member = _resolveCompositeSubModel(
+        anyOfSchema,
+        modelContext,
+        anyOfModel,
+      );
+      if (member != null) {
+        resolvedModels.add((
+          discriminatorValue: _getDiscriminatorValue(
+            discriminator: effectiveDiscriminator,
+            innerSchema: anyOfSchema,
+          ),
+          model: member,
+        ));
+      }
     }
 
     anyOfModel.models = resolvedModels;
@@ -1869,14 +1869,23 @@ class ModelImporter._(
   }) {
     if (innerSchema.ref != null && discriminator?.propertyName != null) {
       final ref = innerSchema.ref!;
+      final pointer = LocalJsonPointer.parse(ref);
       final discriminatorEntry = discriminator?.mapping?.entries
-          .firstWhereOrNull(
-            (entry) =>
-                entry.value == ref ||
-                (_schemas.containsKey(entry.value) &&
-                    '#/components/schemas/${entry.value}' == ref),
-          );
-      return discriminatorEntry?.key ?? ref.split('/').last;
+          .firstWhereOrNull((entry) {
+            if (entry.value == ref) return true;
+            if (_schemas.containsKey(entry.value) &&
+                pointer.componentName('schemas') == entry.value) {
+              return true;
+            }
+            if (!entry.value.startsWith('#') ||
+                !Uri.decodeComponent(entry.value.substring(1))
+                    .startsWith('/')) {
+              return false;
+            }
+            return LocalJsonPointer.parse(entry.value).reference ==
+                pointer.reference;
+          });
+      return discriminatorEntry?.key ?? pointer.tokens.lastOrNull;
     }
     return null;
   }
@@ -1892,7 +1901,10 @@ class ModelImporter._(
     final parentDiscriminators = <parse.Discriminator>[];
 
     for (final alternative in alternatives) {
-      final parentDiscriminator = _findDiscriminatorInAllOfChain(alternative);
+      final parentDiscriminator = _findDiscriminatorInAllOfChain(
+        alternative,
+        <Schema>{},
+      );
       if (parentDiscriminator == null) return null;
 
       parentDiscriminators.add(parentDiscriminator);
@@ -1911,9 +1923,15 @@ class ModelImporter._(
   ///
   /// Recursively descends into allOf members so that discriminators on
   /// grandparent (or deeper) schemas are found.
-  parse.Discriminator? _findDiscriminatorInAllOfChain(Schema schema) {
+  parse.Discriminator? _findDiscriminatorInAllOfChain(
+    Schema schema,
+    Set<Schema> visited,
+  ) {
     final resolvedSchema = resolveSchemaReference(schema);
-    if (resolvedSchema == null) return null;
+    if (resolvedSchema == null ||
+        !visited.add(_canonicalSchema(resolvedSchema))) {
+      return null;
+    }
 
     final allOf = resolvedSchema.allOf;
     if (allOf == null || allOf.isEmpty) return null;
@@ -1927,7 +1945,7 @@ class ModelImporter._(
       }
 
       // Recurse into the member's own allOf chain.
-      final inherited = _findDiscriminatorInAllOfChain(memberSchema);
+      final inherited = _findDiscriminatorInAllOfChain(memberSchema, visited);
       if (inherited != null) return inherited;
     }
 
@@ -1954,18 +1972,15 @@ class ModelImporter._(
 
   Schema? resolveSchemaReference(Schema schema) {
     if (schema.ref == null) return schema;
-
-    final ref = schema.ref!;
-
-    if (!isExternalReference(ref) && ref.contains(r'/$defs/')) {
-      return _defs[ref];
+    if (isExternalReference(schema.ref!)) return null;
+    try {
+      return _schemaForPointer(LocalJsonPointer.parse(schema.ref!));
+      // Missing targets remain nullable for the existing inspection helper;
+      // actual model resolution reports the reference failure.
+      // ignore: avoid_catching_errors
+    } on ArgumentError {
+      return null;
     }
-
-    if (ref.startsWith('#/components/schemas/')) {
-      return _schemas[ref.split('/').last];
-    }
-
-    return null;
   }
 
   AdditionalPropertiesPolicy importAdditionalProperties(
@@ -2031,7 +2046,12 @@ class ModelImporter._(
         schema.isBooleanSchema == null;
   }
 
-  ClassModel _parseClassModel(String? name, Schema schema, Context context) {
+  ClassModel _parseClassModel(
+    String? name,
+    Schema schema,
+    Context context, {
+    bool cacheSchema = true,
+  }) {
     final schemaProperties = schema.properties ?? {};
     final properties = <Property>[];
 
@@ -2041,7 +2061,7 @@ class ModelImporter._(
       properties: properties,
       context: context,
       description: schema.description,
-      additionalPropertiesPolicy: importAdditionalProperties(schema, context),
+      additionalPropertiesPolicy: null,
       isNullable:
           schema.isNullable ??
           (schema.type.contains('object') && schema.hasNullType),
@@ -2062,8 +2082,13 @@ class ModelImporter._(
       // Recursive properties need the model registered before property
       // parsing.
       _logModelAdded(model);
-      _registerModel(model, schema);
+      _registerModel(model, cacheSchema ? schema : null);
     }
+
+    model.additionalPropertiesPolicy = importAdditionalProperties(
+      schema,
+      context,
+    );
 
     for (final MapEntry(key: propertyName, value: propertySchema)
         in schemaProperties.entries) {
@@ -2232,61 +2257,125 @@ class ModelImporter._(
     log.fine('Adding model $name');
   }
 
-  void _collectAllDefs() {
-    for (final entry in _schemas.entries) {
-      final path = '#/components/schemas/${entry.key}';
-      _collectDefs(entry.value, path);
-    }
-  }
+  void registerLocalPathItem(
+    ReferenceWrapper<parse.PathItem> wrapper,
+    LocalJsonPointer pointer,
+  ) => _indexSchemas(wrapper, pointer.tokens, referenced: true);
 
-  /// Recursively collects $defs from a schema and its nested schemas.
-  void _collectDefs(Schema schema, String currentPath) {
-    if (schema.defs != null) {
-      for (final defEntry in schema.defs!.entries) {
-        final defPath = '$currentPath/\$defs/${defEntry.key}';
-        _defs[defPath] = defEntry.value;
-        _collectDefs(defEntry.value, defPath);
+  void registerReferencedMediaType(parse.MediaType mediaType) =>
+      _indexSchemas(mediaType, null, referenced: true);
+
+  void _indexSchemas(
+    Object? value,
+    List<String>? path, {
+    bool referenced = false,
+  }) {
+    if (value is Schema) {
+      final canonical = path == null
+          ? _canonicalSchema(value)
+          : _schemaReferences.putIfAbsent(
+              LocalJsonPointer.fromTokens(path).reference,
+              () => value,
+            );
+      if (!identical(canonical, value)) _schemaAliases[value] = canonical;
+      if (referenced) {
+        _nestedReferenceSchemas.add(canonical);
+        final existing = _existingSchemaModel(canonical);
+        if (existing != null) _nestedReferenceModels[canonical] = existing;
       }
-    }
-
-    if (schema.properties != null) {
-      for (final propEntry in schema.properties!.entries) {
-        _collectDefs(
-          propEntry.value,
-          '$currentPath/properties/${propEntry.key}',
+    } else if (value is InlinedObject<Object?>) {
+      _indexSchemas(value.object, path, referenced: referenced);
+      return;
+    } else if (value is Map<String, dynamic>) {
+      for (final entry in value.entries) {
+        _indexSchemas(
+          entry.value,
+          path == null ? null : [...path, entry.key],
+          referenced: referenced,
         );
       }
-    }
-
-    if (schema.items != null) {
-      _collectDefs(schema.items!, '$currentPath/items');
-    }
-
-    if (schema.allOf != null) {
-      for (var i = 0; i < schema.allOf!.length; i++) {
-        _collectDefs(schema.allOf![i], '$currentPath/allOf/$i');
+      return;
+    } else if (value is List<Object?>) {
+      for (var index = 0; index < value.length; index++) {
+        _indexSchemas(
+          value[index],
+          path == null ? null : [...path, '$index'],
+          referenced: referenced,
+        );
       }
+      return;
     }
 
-    if (schema.anyOf != null) {
-      for (var i = 0; i < schema.anyOf!.length; i++) {
-        _collectDefs(schema.anyOf![i], '$currentPath/anyOf/$i');
+    final children = switch (value) {
+      OpenApiObject() => <String, Object?>{
+        'components': value.components,
+        'paths': value.paths,
+      },
+      parse.Components() => <String, Object?>{
+        'schemas': value.schemas,
+        'parameters': value.parameters,
+        'headers': value.headers,
+        'requestBodies': value.requestBodies,
+        'responses': value.responses,
+        'pathItems': value.pathItems,
+        'mediaTypes': value.mediaTypes,
+      },
+      parse.PathItem() => <String, Object?>{
+        'get': value.get,
+        'put': value.put,
+        'post': value.post,
+        'delete': value.delete,
+        'patch': value.patch,
+        'head': value.head,
+        'options': value.options,
+        'trace': value.trace,
+        'parameters': value.parameters,
+      },
+      parse.Operation() => <String, Object?>{
+        'parameters': value.parameters,
+        'requestBody': value.requestBody,
+        'responses': value.responses,
+      },
+      parse.Parameter() => <String, Object?>{
+        'schema': value.schema,
+        'content': value.content,
+      },
+      parse.Header() => <String, Object?>{
+        'schema': value.schema,
+        'content': value.content,
+      },
+      parse.RequestBody() => <String, Object?>{'content': value.content},
+      parse.Response() => <String, Object?>{
+        'headers': value.headers,
+        'content': value.content,
+      },
+      parse.MediaType() => <String, Object?>{
+        'schema': value.schema,
+        'itemSchema': value.itemSchema,
+        'encoding': value.encoding,
+      },
+      parse.Encoding() => <String, Object?>{'headers': value.headers},
+      Schema() => <String, Object?>{
+        r'$defs': value.defs,
+        'properties': value.properties,
+        'items': value.items,
+        'allOf': value.allOf,
+        'oneOf': value.oneOf,
+        'anyOf': value.anyOf,
+        'not': value.not,
+        'additionalProperties': value.additionalProperties,
+        'contentSchema': value.contentSchema,
+      },
+      _ => const <String, Object?>{},
+    };
+    for (final entry in children.entries) {
+      if (entry.value != null) {
+        _indexSchemas(
+          entry.value,
+          path == null ? null : [...path, entry.key],
+          referenced: referenced,
+        );
       }
-    }
-
-    if (schema.oneOf != null) {
-      for (var i = 0; i < schema.oneOf!.length; i++) {
-        _collectDefs(schema.oneOf![i], '$currentPath/oneOf/$i');
-      }
-    }
-
-    if (schema.not != null) {
-      _collectDefs(schema.not!, '$currentPath/not');
-    }
-
-    final ap = schema.additionalProperties;
-    if (ap is Schema) {
-      _collectDefs(ap, '$currentPath/additionalProperties');
     }
   }
 }

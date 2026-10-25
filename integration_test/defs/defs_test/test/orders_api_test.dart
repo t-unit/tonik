@@ -1,4 +1,4 @@
-import 'package:defs_api/defs_api.dart';
+import 'package:defs_api/defs_api.dart' hide List, Map;
 import 'package:test/test.dart';
 
 void main() {

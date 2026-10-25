@@ -180,6 +180,11 @@ void main() {
                 cancellation: cancellation, response: response,
                 sourceErrorType: (error) => error is RequestAbortedException && cancellation.isCancelled ? TonikErrorType.cancelled : TonikErrorType.network);
               return GetItemsResponse200(body: _$body);
+            case (200, _):
+              final _$content = response.headers['content-type'] ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
+              final _$status = response.statusCode;
+              throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
             case (400, r'text/plain'):
               final _$body = decodeResponseText(((response as Response)).bodyBytes, contentType: response.headers['content-type']);
               return GetItemsResponse400(body: _$body);
@@ -448,6 +453,132 @@ void main() {
         }
       '''),
       ),
+    );
+  });
+
+  test('Dio rejects explicit status media before trying a range response', () {
+    final streamResponse = operation.responses.values.single;
+    final context = Context.initial();
+    operation.responses = {
+      const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+        name: 'Complete',
+        context: context,
+        headers: const {},
+        description: '',
+        bodies: {
+          ResponseBody(
+            model: IntegerModel(context: context),
+            rawContentType: 'application/json',
+            contentType: ContentType.json,
+            examples: const [],
+            delivery: ResponseDelivery.complete,
+          ),
+        },
+      ),
+      const RangeResponseStatus(min: 200, max: 299): streamResponse,
+    };
+    final generator = ParseGenerator(
+      nameManager: names,
+      package: 'api',
+      backendGenerator: const DioBackendGenerator(),
+    );
+    final selection = collapseWhitespace(
+      generator
+          .generateResponseSelectionMethod(operation)
+          .accept(emitter)
+          .toString(),
+    );
+    final parse = collapseWhitespace(
+      generator
+          .generateParseResponseMethod(operation)
+          .accept(emitter)
+          .toString(),
+    );
+
+    expect(
+      selection,
+      stringContainsInOrder([
+        "case (200, r'application/json'):",
+        'return false;',
+        'case (200, _):',
+        'throw ResponseDecodingException(',
+        "case (var status, r'application/x-ndjson')",
+        'return true;',
+      ]),
+    );
+    expect(
+      parse,
+      stringContainsInOrder([
+        "case (200, r'application/json'):",
+        'decodeResponseJson<Object?>',
+        'case (200, _):',
+        'throw ResponseDecodingException(',
+        "case (var status, r'application/x-ndjson')",
+        'decodeResponseStream<int, Response<Object?>>',
+      ]),
+    );
+  });
+
+  test('HTTP rejects range status media before trying a default response', () {
+    final streamResponse = operation.responses.values.single;
+    final context = Context.initial();
+    operation.responses = {
+      const RangeResponseStatus(min: 200, max: 299): streamResponse,
+      const DefaultResponseStatus(): ResponseObject(
+        name: 'Complete',
+        context: context,
+        headers: const {},
+        description: '',
+        bodies: {
+          ResponseBody(
+            model: IntegerModel(context: context),
+            rawContentType: 'application/json',
+            contentType: ContentType.json,
+            examples: const [],
+            delivery: ResponseDelivery.complete,
+          ),
+        },
+      ),
+    };
+    final generator = ParseGenerator(
+      nameManager: names,
+      package: 'api',
+      backendGenerator: const HttpBackendGenerator(),
+    );
+    final selection = collapseWhitespace(
+      generator
+          .generateResponseSelectionMethod(operation)
+          .accept(emitter)
+          .toString(),
+    );
+    final parse = collapseWhitespace(
+      generator
+          .generateParseResponseMethod(operation)
+          .accept(emitter)
+          .toString(),
+    );
+
+    expect(
+      selection,
+      stringContainsInOrder([
+        "case (var status, r'application/x-ndjson')",
+        'return true;',
+        'case (var status, _) when status >= 200 && status <= 299',
+        'throw ResponseDecodingException(',
+        "case (_, r'application/json'):",
+        'return false;',
+      ]),
+    );
+    expect(
+      parse,
+      stringContainsInOrder([
+        "case (var status, r'application/x-ndjson')",
+        'decodeResponseStream<int, BaseResponse>',
+        'case (var status, _) when status >= 200 && status <= 299',
+        'throw ResponseDecodingException(',
+        "case (_, r'application/json'):",
+        'decodeResponseJson<Object?>',
+      ]),
     );
   });
 }

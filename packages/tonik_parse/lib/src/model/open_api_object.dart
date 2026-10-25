@@ -15,16 +15,24 @@ class OpenApiObject({
   required final Components? components,
   required final List<Tag>? tags,
   final ExternalDocumentation? externalDocs,
+  final Map<String, dynamic>? source,
 }) {
   factory fromJson(Map<String, dynamic> json) => OpenApiObject(
+    source: json,
     openapi: json['openapi'] as String,
     info: Info.fromJson(json['info'] as Map<String, dynamic>),
     servers: (json['servers'] as List<dynamic>?)
         ?.map((e) => Server.fromJson(e as Map<String, dynamic>))
         .toList(),
-    paths: (json['paths'] as Map<String, dynamic>).map(
-      (k, e) => MapEntry(k, ReferenceWrapper<PathItem>.fromJson(e)),
-    ),
+    paths: {
+      for (final entry
+          in (json.containsKey('paths')
+                  ? json['paths'] as Map<String, dynamic>
+                  : const <String, dynamic>{})
+              .entries)
+        if (!entry.key.startsWith('x-'))
+          entry.key: ReferenceWrapper<PathItem>.fromJson(entry.value),
+    },
     components: json['components'] == null
         ? null
         : Components.fromJson(json['components'] as Map<String, dynamic>),

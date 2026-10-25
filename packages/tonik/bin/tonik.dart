@@ -21,13 +21,16 @@ void printUsage(ArgParser argParser) {
 
 final Logger logger = Logger('tonik');
 
-CliConfig _mergeConfigOrExit(ArgResults arguments, CliConfig fileConfig) {
+CliConfig _mergeConfigOrExit(ArgResults arguments, String configPath) {
   try {
     return mergeCliConfig(
       arguments: arguments,
-      fileConfig: fileConfig,
+      fileConfig: ConfigLoader.load(configPath),
       environmentWorkerCount: Platform.environment['TONIK_WORKERS'],
     );
+  } on ConfigLoaderException catch (exception) {
+    stderr.writeln('Error: ${exception.message}');
+    exit(128);
   } on FormatException catch (formatException) {
     stderr.writeln('Error: ${formatException.message}');
     exit(128);
@@ -55,9 +58,7 @@ Future<void> main(List<String> arguments) async {
   }
 
   final configPath = results.option('config') ?? 'tonik.yaml';
-  final fileConfig = ConfigLoader.load(configPath);
-
-  final mergedConfig = _mergeConfigOrExit(results, fileConfig);
+  final mergedConfig = _mergeConfigOrExit(results, configPath);
 
   final packageName = mergedConfig.packageName;
   final openApiPath = mergedConfig.spec;

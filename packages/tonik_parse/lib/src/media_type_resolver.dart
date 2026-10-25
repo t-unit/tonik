@@ -1,3 +1,4 @@
+import 'package:tonik_parse/src/local_json_pointer.dart';
 import 'package:tonik_parse/src/model/media_type.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/reference.dart';
@@ -13,29 +14,18 @@ class MediaTypeResolver(final OpenApiObject openApiObject) {
           'Only local media type references are supported, found $ref',
         );
       }
-      final segments = ref.startsWith('#')
-          ? Uri.decodeComponent(ref.substring(1))
-                .split('/')
-                .map(
-                  (segment) =>
-                      segment.replaceAll('~1', '/').replaceAll('~0', '~'),
-                )
-                .toList()
-          : <String>[];
-      if (segments.length != 4 ||
-          segments[0].isNotEmpty ||
-          segments[1] != 'components' ||
-          segments[2] != 'mediaTypes') {
+      final pointer = LocalJsonPointer.parse(ref);
+      final name = pointer.componentName('mediaTypes');
+      if (name == null) {
         throw UnimplementedError(
           'Only components.mediaTypes references are supported, found $ref',
         );
       }
-      if (!chain.add(ref)) {
+      if (!chain.add(pointer.reference)) {
         throw ArgumentError(
           'Cyclic media type reference: ${[...chain, ref].join(" -> ")}',
         );
       }
-      final name = segments.last;
       final target = openApiObject.components?.mediaTypes?[name];
       if (target == null) {
         throw ArgumentError('Media type $ref not found');

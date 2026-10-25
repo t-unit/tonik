@@ -21,6 +21,9 @@ class const DeprecationHandler() {
     return switch (mode) {
       DeprecatedHandling.annotate => models,
       DeprecatedHandling.exclude => models.where((model) {
+        // Retained consumers still reference this alias object. Removing its
+        // naming layer lets them use the target without a removed import.
+        if (model is AliasModel && model.isDeprecated) model.name = null;
         return switch (model) {
           final AliasModel m => !m.isDeprecated,
           final ClassModel m => !m.isDeprecated,

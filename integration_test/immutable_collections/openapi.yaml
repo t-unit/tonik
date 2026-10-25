@@ -709,3 +709,65 @@ components:
       allOf:
         - $ref: '#/components/schemas/PackedFirst'
         - $ref: '#/components/schemas/PackedSecond'
+
+    StringValues:
+      type: array
+      items:
+        type: string
+
+    StringValuesAlias:
+      $ref: '#/components/schemas/StringValues'
+
+    AnyOfListAlias:
+      anyOf:
+        - $ref: '#/components/schemas/StringValuesAlias'
+        - type: integer
+
+    StringDictionary:
+      type: object
+      additionalProperties:
+        type: string
+
+    StringDictionaryAlias:
+      $ref: '#/components/schemas/StringDictionary'
+
+    AnyOfMapAlias:
+      anyOf:
+        - $ref: '#/components/schemas/StringDictionaryAlias'
+        - type: integer
+
+    AnyOfUnsupportedAliases:
+      anyOf:
+        - $ref: '#/components/schemas/StringDictionaryAlias'
+
+    FreeformValue: {}
+
+    FreeformAlias:
+      $ref: '#/components/schemas/FreeformValue'
+
+    FreeformHolder:
+      type: object
+      properties:
+        data: {}
+        aliasedData:
+          $ref: '#/components/schemas/FreeformAlias'
+
+    OneOfFreeformValue:
+      oneOf:
+        - $ref: '#/components/schemas/FreeformAlias'
+        - type: integer
+
+    AnyOfFreeformValue:
+      anyOf:
+        - $ref: '#/components/schemas/FreeformAlias'
+        - type: integer
+
+    AllOfFreeformValue:
+      allOf:
+        - type: object
+          properties:
+            data: {}
+        - type: object
+          properties:
+            label:
+              type: string
