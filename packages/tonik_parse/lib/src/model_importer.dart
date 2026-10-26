@@ -217,7 +217,7 @@ class ModelImporter._(
       return;
     }
 
-    if (schema.allOf != null) {
+    if (schema.allOf != null || _hasAnyOfObjectSiblings(schema)) {
       final modelContext = context.push(name);
       final allOfModel = AllOfModel(
         defaultValue: schema.rawDefault,
@@ -544,6 +544,17 @@ class ModelImporter._(
       return;
     }
 
+    if (_hasAnyOfObjectSiblings(schema)) {
+      _populateAnyOfObjectSiblings(
+        name,
+        schema,
+        context,
+        existingModel as AllOfModel,
+      );
+      applyExamples(existingModel, examples);
+      return;
+    }
+
     if (schema.allOf != null) {
       _populateAllOfShell(name, schema, context, existingModel as AllOfModel);
       applyExamples(existingModel, examples);
@@ -732,6 +743,40 @@ class ModelImporter._(
       current = current.model;
     }
     return false;
+  }
+
+  bool _hasAnyOfObjectSiblings(Schema schema) =>
+      schema.allOf == null &&
+      schema.oneOf == null &&
+      schema.anyOf != null &&
+      schema.nonNullTypes.singleOrNull == 'object' &&
+      schema.properties != null;
+
+  void _populateAnyOfObjectSiblings(
+    String? name,
+    Schema schema,
+    Context context,
+    AllOfModel shell,
+  ) {
+    final modelContext = context.push(name ?? 'allOf');
+    final siblings = _parseClassModel(
+      null,
+      schema,
+      modelContext,
+      cacheSchema: false,
+    );
+    final union = _parseAnyOf(
+      null,
+      schema,
+      modelContext,
+      cacheSchema: false,
+      enclosingModel: shell,
+    );
+    shell
+      ..models = [siblings, union]
+      ..isNullable =
+          siblings.isEffectivelyNullable && union.isEffectivelyNullable;
+    if (name != null) _populatedComposites.add(name);
   }
 
   /// Populates an allOf shell's models.
@@ -1450,7 +1495,7 @@ class ModelImporter._(
       return _annotateSchemaValue(name, model, schema, context);
     }
 
-    if (schema.allOf != null) {
+    if (schema.allOf != null || _hasAnyOfObjectSiblings(schema)) {
       return _parseAllOf(name, schema, context);
     }
 
@@ -1706,6 +1751,11 @@ class ModelImporter._(
       _registerModel(allOfModel, schema);
     }
 
+    if (_hasAnyOfObjectSiblings(schema)) {
+      _populateAnyOfObjectSiblings(name, schema, context, allOfModel);
+      return allOfModel;
+    }
+
     allOfModel.additionalPropertiesPolicy = importAdditionalProperties(
       schema,
       modelContext,
@@ -1812,6 +1862,7 @@ class ModelImporter._(
     Schema schema,
     Context context, {
     bool cacheSchema = true,
+    Model? enclosingModel,
   }) {
     final modelContext = context.push(name ?? 'anyOf');
     final alternatives = schema.anyOf!;
@@ -1851,7 +1902,7 @@ class ModelImporter._(
       final member = _resolveCompositeSubModel(
         anyOfSchema,
         modelContext,
-        anyOfModel,
+        enclosingModel ?? anyOfModel,
       );
       if (member != null) {
         resolvedModels.add((
