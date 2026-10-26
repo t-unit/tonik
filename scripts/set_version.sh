@@ -2,6 +2,9 @@
 
 set -eE
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/version_update_utils.sh"
+
 # Version update script for Tonik monorepo
 # Usage: ./scripts/set_version.sh 0.0.9
 # Usage (dry-run): ./scripts/set_version.sh 0.0.9 --dry-run
@@ -34,7 +37,7 @@ fi
 VERSION=$1
 
 if [ "$DRY_RUN" = true ]; then
-  echo "🔍 DRY RUN MODE - Files will be updated and tests run, but no git commits/tags/push"
+  echo "🔍 DRY RUN MODE - Version updates will be previewed and tests run without changing files"
 fi
 
 echo "🔄 Setting version to $VERSION"
@@ -127,27 +130,31 @@ For full changes across all packages, see the [complete changelog](https://githu
   echo ""
 else
   echo "🔄 Skipping melos version (dry-run mode)"
-  echo "  Note: Package pubspecs won't be updated, only root and generator"
+  echo "  Note: Package pubspecs, generator, and test expectations are unchanged"
   echo ""
 fi
 
-echo "🔍 Updating pubspec_generator with new version..."
-# Update hardcoded tonik_util version in pubspec_generator.dart
-sed -i.bak -E "s/(tonik_util: \^)[0-9]+\.[0-9]+\.[0-9]+/\1$VERSION/g" packages/tonik_generate/lib/src/pubspec_generator.dart
-rm packages/tonik_generate/lib/src/pubspec_generator.dart.bak
-
-if [ "$DRY_RUN" = false ]; then
-  # Check if there were changes
-  if [ -n "$(git diff packages/tonik_generate/lib/src/pubspec_generator.dart)" ]; then
-    echo "✅ Updated pubspec_generator with version $VERSION"
-    git add packages/tonik_generate/lib/src/pubspec_generator.dart
+echo "🔍 Updating generator and test expectations with new version..."
+GENERATOR_FILE="packages/tonik_generate/lib/src/pubspec_generator.dart"
+GENERATOR_TEST_FILE="packages/tonik_generate/test/src/pubspec_generator_test.dart"
+if [ "$DRY_RUN" = true ]; then
+  VERSION_PREVIEW_DIR="$(mktemp -d)"
+  trap 'rm -rf "$VERSION_PREVIEW_DIR"' EXIT
+  cp "$GENERATOR_FILE" "$VERSION_PREVIEW_DIR/generator.dart"
+  cp "$GENERATOR_TEST_FILE" "$VERSION_PREVIEW_DIR/generator_test.dart"
+  update_generated_runtime_version "$VERSION_PREVIEW_DIR/generator.dart" "$VERSION"
+  update_generated_runtime_version "$VERSION_PREVIEW_DIR/generator_test.dart" "$VERSION" 3
+  echo "✅ Verified generator and test expectation updates to ^$VERSION (preview only)"
+else
+  update_generated_runtime_version "$GENERATOR_FILE" "$VERSION"
+  update_generated_runtime_version "$GENERATOR_TEST_FILE" "$VERSION" 3
+  if [ -n "$(git diff -- "$GENERATOR_FILE" "$GENERATOR_TEST_FILE")" ]; then
+    echo "✅ Updated generator and test expectations with version $VERSION"
+    git add "$GENERATOR_FILE" "$GENERATOR_TEST_FILE"
     git commit --amend --no-edit
   else
-    echo "✅ pubspec_generator already up to date"
+    echo "✅ Generator and test expectations use ^$VERSION"
   fi
-else
-  echo "✅ Updated file (not committed):"
-  echo "  - packages/tonik_generate/lib/src/pubspec_generator.dart"
 fi
 echo ""
 
