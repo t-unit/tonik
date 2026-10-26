@@ -9,6 +9,7 @@ import 'package:tonik_util/src/encoding/label_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/matrix_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
 import 'package:tonik_util/src/encoding/pipe_delimited_encoder_extensions.dart';
+import 'package:tonik_util/src/encoding/property_value.dart';
 import 'package:tonik_util/src/encoding/simple_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/space_delimited_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/string_map_delimited_encoder_extensions.dart';
@@ -756,6 +757,22 @@ String encodeAnyValueToString(Object? value, {required bool allowEmpty}) {
   }
   return encodeUnknownFlatScalar(value, context: 'map parameter value');
 }
+
+PropertyValue encodeAnyValueToPropertyValue(
+  Object? value, {
+  required bool allowEmpty,
+}) => switch (value) {
+  List<Object?>() => PropertyValue.array(
+    value
+        .map(
+          (element) => encodeAnyValueToString(element, allowEmpty: allowEmpty),
+        )
+        .toList(),
+  ),
+  _ => PropertyValue.scalar(
+    encodeAnyValueToString(value, allowEmpty: allowEmpty),
+  ),
+};
 
 /// Rejects unsupported runtime types and maps with non-string keys.
 Object? encodeAnyToJson(Object? value) =>

@@ -112,8 +112,7 @@ void main() {
       );
     });
 
-    test('omits an empty scalar flagged as an exploded array beside a '
-        'scalar', () {
+    test('keeps an empty scalar with an explode descriptor', () {
       expect(
         <String, PropertyValue>{
           'name': const PropertyValue.scalar('John'),
@@ -125,7 +124,10 @@ void main() {
           fieldEncodings: const {'numbers': FormFieldEncoding(explode: true)},
           textEncoding: utf8,
         ),
-        const <ParameterEntry>[(name: 'name', value: 'John')],
+        const <ParameterEntry>[
+          (name: 'name', value: 'John'),
+          (name: 'numbers', value: ''),
+        ],
       );
     });
 

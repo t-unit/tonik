@@ -96,12 +96,6 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
       final encoding = fieldEncodings[name];
       final explodeArray = encoding?.explode ?? false;
 
-      // A null/absent array property is flattened to an empty scalar upstream;
-      // exploding it yields an empty list, so it drops out of the body.
-      if (entry.value case ScalarPropertyValue(value: '') when explodeArray) {
-        continue;
-      }
-
       // A present descriptor always carries a concrete allowReserved, so the
       // object-level value is only a fallback for properties without one.
       final valueAllowReserved = encoding?.allowReserved ?? allowReserved;

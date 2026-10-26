@@ -28,7 +28,7 @@ void main() {
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
-  test('aliased list properties retain array parameter values', () {
+  test('aliased arrays retain unknown scalar siblings', () {
     final list = ListModel(
       content: StringModel(context: context),
       context: context,
@@ -60,6 +60,19 @@ void main() {
       examples: const [],
       properties: [
         Property(
+          name: 'label',
+          model: AnyModel(context: context),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+          examples: const [],
+          defaultValue: null,
+          isReadOnly: false,
+          isWriteOnly: false,
+          nameOverride: null,
+          description: null,
+        ),
+        Property(
           name: 'tags',
           model: alias,
           isRequired: true,
@@ -89,6 +102,11 @@ void main() {
       @override
       Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final _$result = <String, PropertyValue>{};
+        if (this.label != null) {
+          _$result[r'label'] = PropertyValue.scalar(
+            encodeUnknownFlatScalar(this.label!, context: r'Filter.label'),
+          );
+        }
         _$result[r'tags'] = PropertyValue.array(this.tags);
         return _$result;
       }
@@ -375,7 +393,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
   });
 
   group('composite model runtime checking for parameterProperties', () {
-    test('encodes oneOf property based on runtime encoding shape', () {
+    test('encodes oneOf property from its serialized value', () {
       final oneOfModel = OneOfModel(
         isDeprecated: false,
         name: 'StringOrClass',
@@ -458,15 +476,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (this.value.currentEncodingShape == EncodingShape.simple) {
-    _$result[r'value'] = PropertyValue.scalar(
-      encodeAnyValueToString(this.value.toJson(), allowEmpty: allowEmpty),
-    );
-  } else {
-    throw EncodingException(
-      r'parameterProperties not supported for Container: contains complex types',
-    );
-  }
+  _$result[r'value'] = encodeAnyValueToPropertyValue(this.value.toJson(), allowEmpty: allowEmpty);
   return _$result;
 }
 ''';
@@ -477,7 +487,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       );
     });
 
-    test('encodes anyOf property based on runtime encoding shape', () {
+    test('encodes anyOf property from its serialized value', () {
       final anyOfModel = AnyOfModel(
         isDeprecated: false,
         name: 'StringOrInt',
@@ -560,15 +570,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (this.data.currentEncodingShape == EncodingShape.simple) {
-    _$result[r'data'] = PropertyValue.scalar(
-      encodeAnyValueToString(this.data.toJson(), allowEmpty: allowEmpty),
-    );
-  } else {
-    throw EncodingException(
-      r'parameterProperties not supported for FlexibleContainer: contains complex types',
-    );
-  }
+  _$result[r'data'] = encodeAnyValueToPropertyValue(this.data.toJson(), allowEmpty: allowEmpty);
   return _$result;
 }
 ''';
@@ -579,7 +581,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
       );
     });
 
-    test('encodes allOf property based on runtime encoding shape', () {
+    test('encodes allOf property from its serialized value', () {
       final stringModel = StringModel(context: context);
       final complexModel = ClassModel(
         isDeprecated: false,
@@ -659,15 +661,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 @override
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
-  if (this.combined.currentEncodingShape == EncodingShape.simple) {
-    _$result[r'combined'] = PropertyValue.scalar(
-      encodeAnyValueToString(this.combined.toJson(), allowEmpty: allowEmpty),
-    );
-  } else {
-    throw EncodingException(
-      r'parameterProperties not supported for CombinedContainer: contains complex types',
-    );
-  }
+  _$result[r'combined'] = encodeAnyValueToPropertyValue(this.combined.toJson(), allowEmpty: allowEmpty);
   return _$result;
 }
 ''';
@@ -816,7 +810,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
       );
     });
 
-    test('encodes optional oneOf property based on runtime encoding shape', () {
+    test('encodes optional oneOf property from its serialized value', () {
       final oneOfModel = OneOfModel(
         isDeprecated: false,
         name: 'StringOrClass',
@@ -900,15 +894,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   if (this.value != null) {
-    if (this.value!.currentEncodingShape == EncodingShape.simple) {
-      _$result[r'value'] = PropertyValue.scalar(
-        encodeAnyValueToString(this.value!.toJson(), allowEmpty: allowEmpty),
-      );
-    } else {
-      throw EncodingException(
-        r'parameterProperties not supported for Container: contains complex types',
-      );
-    }
+    _$result[r'value'] = encodeAnyValueToPropertyValue(this.value!.toJson(), allowEmpty: allowEmpty);
   }
   return _$result;
 }
@@ -1171,35 +1157,11 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
     _$result[r'count'] = PropertyValue.scalar(this.count!.toString());
   }
   _$result[r'active'] = PropertyValue.scalar(this.active.toString());
-  if (this.data1.currentEncodingShape == EncodingShape.simple) {
-    _$result[r'data1'] = PropertyValue.scalar(
-      encodeAnyValueToString(this.data1.toJson(), allowEmpty: allowEmpty),
-    );
-  } else {
-    throw EncodingException(
-      r'parameterProperties not supported for MixedContainer: contains complex types',
-    );
-  }
+  _$result[r'data1'] = encodeAnyValueToPropertyValue(this.data1.toJson(), allowEmpty: allowEmpty);
   if (this.data2 != null) {
-    if (this.data2!.currentEncodingShape == EncodingShape.simple) {
-      _$result[r'data2'] = PropertyValue.scalar(
-        encodeAnyValueToString(this.data2!.toJson(), allowEmpty: allowEmpty),
-      );
-    } else {
-      throw EncodingException(
-        r'parameterProperties not supported for MixedContainer: contains complex types',
-      );
-    }
+    _$result[r'data2'] = encodeAnyValueToPropertyValue(this.data2!.toJson(), allowEmpty: allowEmpty);
   }
-  if (this.flexible.currentEncodingShape == EncodingShape.simple) {
-    _$result[r'flexible'] = PropertyValue.scalar(
-      encodeAnyValueToString(this.flexible.toJson(), allowEmpty: allowEmpty),
-    );
-  } else {
-    throw EncodingException(
-      r'parameterProperties not supported for MixedContainer: contains complex types',
-    );
-  }
+  _$result[r'flexible'] = encodeAnyValueToPropertyValue(this.flexible.toJson(), allowEmpty: allowEmpty);
   return _$result;
 }
 ''';
@@ -3647,13 +3609,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   final _$result = <String, PropertyValue>{};
   _$result[r'signature'] = PropertyValue.scalar(this.signature.toBase64String());
-  if (this.value.currentEncodingShape == EncodingShape.simple) {
-    _$result[r'value'] = PropertyValue.scalar(encodeAnyValueToString(this.value.toJson(), allowEmpty: allowEmpty));
-  } else {
-    throw EncodingException(
-      r'parameterProperties not supported for ByteMixedContainer: contains complex types',
-    );
-  }
+  _$result[r'value'] = encodeAnyValueToPropertyValue(this.value.toJson(), allowEmpty: allowEmpty);
   return _$result;
 }
 ''';
