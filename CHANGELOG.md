@@ -3,6 +3,188 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2026-10-26
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik_util` - `v0.11.0`](#tonik_util---v0110)
+ - [`tonik_core` - `v0.11.0`](#tonik_core---v0110)
+ - [`tonik_parse` - `v0.11.0`](#tonik_parse---v0110)
+ - [`tonik_generate` - `v0.11.0`](#tonik_generate---v0110)
+ - [`tonik` - `v0.11.0`](#tonik---v0110)
+
+---
+
+#### `tonik_util` - `v0.11.0`
+
+ - **REVERT**: undo cancellation simplification on unrelated branch.
+ - **REFACTOR**: simplify stream subscription cancellation.
+ - **REFACTOR**: simplify stream subscription cancellation.
+ - **FIX**: preserve timezone offset seconds in parsing and encoding.
+ - **FIX**: encode array values in composed form fields.
+ - **FIX**: preserve nested properties in composed JSON models.
+ - **FIX**: normalize sub-minute datetime offsets when encoding.
+ - **FIX**: correct multipart array and style encoding.
+ - **FIX**: normalize malformed form decoding errors.
+ - **FIX**: preserve literal percent keys in simple objects.
+ - **FIX**: preserve equals signs in exploded object values.
+ - **FIX**: restore binary form decoding.
+ - **FIX**: preserve response header text and quoted values.
+ - **FIX**: percent-encode reserved URI punctuation.
+ - **FIX**: preserve null slots in delimited lists.
+ - **FIX**: preserve hour-only datetime offsets.
+ - **FIX**: apply response charset fallback across media types.
+ - **FIX**: omit equals for empty exploded matrix values.
+ - **FIX**: encode styled query parameter names.
+ - **FIX**: align date year formatting with DateTime.
+ - **FIX**: honor explode for untyped form query parameters.
+ - **FIX**(tonik_util): accept signed and extended date years.
+ - **FIX**(tonik_util): pad non-UTC DateTime years.
+ - **FIX**: encode BigDecimal values in plain notation.
+ - **FEAT**: add JSON-seq streaming and recoverable item errors.
+ - **FEAT**: add typed streaming responses.
+
+#### `tonik_core` - `v0.11.0`
+
+ - **REFACTOR**: simplify named multipart planning.
+ - **REFACTOR**: model named multipart layout in core.
+ - **REFACTOR**: require explicit core constructor properties.
+ - **FIX**: reconcile discriminator aliases with current references.
+ - **FIX**: preserve primitive alias annotations.
+ - **FIX**: resolve complete local JSON pointers.
+ - **FIX**: preserve discriminator mapping aliases.
+ - **FIX**: guard composite encoding shape traversal against cycles.
+ - **FIX**: apply schema deprecation policies to aliases.
+ - **FIX**: apply deprecation policies to cookie parameters.
+ - **FIX**: normalize operation bodies outside registries.
+ - **FIX**: isolate operation parameter name overrides.
+ - **FIX**: apply parameter name overrides by wire name.
+ - **FIX**: preserve parameter reference descriptions.
+ - **FIX**: preserve document metadata during content type normalization.
+ - **FEAT**: configure streaming content types.
+ - **FEAT**: add JSON-seq streaming and recoverable item errors.
+ - **FEAT**: add typed streaming responses.
+
+#### `tonik_parse` - `v0.11.0`
+
+ - **REFACTOR**: simplify named multipart planning.
+ - **REFACTOR**: model named multipart layout in core.
+ - **REFACTOR**: require explicit core constructor properties.
+ - **FIX**: preserve nullable anyOf members.
+ - **FIX**: preserve access flags on referenced properties.
+ - **FIX**: preserve nested properties in composed JSON models.
+ - **FIX**: correct multipart array and style encoding.
+ - **FIX**: recognize OAS 3.2 and document current support.
+ - **FIX**: reconcile discriminator aliases with current references.
+ - **FIX**: keep recursive definition placeholders internal.
+ - **FIX**: preserve primitive alias annotations.
+ - **FIX**: resolve complete local JSON pointers.
+ - **FIX**: preserve null types in arrays and inline unions.
+ - **FIX**: reuse forward parameter and header components.
+ - **FIX**: preserve discriminator mapping aliases.
+ - **FIX**: preserve values in typeless enum schemas.
+ - **FIX**: support optional document fields and extensions.
+ - **FIX**: honor component names in discriminator mappings.
+ - **FIX**: preserve definition reference identity.
+ - **FIX**: preserve parameter reference descriptions.
+ - **FEAT**: configure streaming content types.
+ - **FEAT**: add JSON-seq streaming and recoverable item errors.
+ - **FEAT**: add typed streaming responses.
+ - **FEAT**: support dynamic multipart root maps.
+ - **DOCS**: trim parser support summary.
+
+#### `tonik_generate` - `v0.11.0`
+
+ - **REFACTOR**: simplify multipart dynamic validation.
+ - **REFACTOR**: model named multipart layout in core.
+ - **REFACTOR**: simplify named multipart planning.
+ - **REFACTOR**: simplify multipart file emission.
+ - **REFACTOR**(tonik_generate): share named multipart field discovery.
+ - **REFACTOR**: require explicit core constructor properties.
+ - **REFACTOR**: inject streaming generator dependencies.
+ - **PERF**: generate copyWith as typed functions.
+ - **FIX**: preserve response header text and quoted values.
+ - **FIX**(tonik_generate): merge current schemas for list parameters.
+ - **FIX**(tonik_generate): merge current equality handling for aliases.
+ - **FIX**: preserve nullable anyOf members.
+ - **FIX**(tonik_generate): reconcile value equality with main.
+ - **FIX**(tonik_generate): reconcile list parameter aliases with main.
+ - **FIX**(tonik_generate): reconcile collection aliases with main.
+ - **FIX**(tonik_generate): compare free-form values deeply.
+ - **FIX**: preserve discriminator mapping aliases.
+ - **FIX**(tonik_generate): support aliased list properties in parameters.
+ - **FIX**(tonik_generate): resolve collection aliases in anyOf models.
+ - **FIX**: preserve literal percent keys in simple objects.
+ - **FIX**: preserve equals signs in exploded object values.
+ - **FIX**: restore binary form decoding.
+ - **FIX**: safely inject oneOf JSON discriminators.
+ - **FIX**: resolve allOf union merge conflicts.
+ - **FIX**: reconcile repeated multipart array values.
+ - **FIX**: include referenced responses in Accept headers.
+ - **FIX**: preserve borrowed Dio client base URLs.
+ - **FIX**: escape server variable enum field collisions.
+ - **FIX**: preserve literal multipart header values.
+ - **FIX**: form-encode multipart map parts on both transports.
+ - **FIX**: percent-encode reserved URI punctuation.
+ - **FIX**: preserve literal multipart array values.
+ - **FIX**: use value equality for collection response wrappers.
+ - **FIX**: apply response charset fallback across media types.
+ - **FIX**: reject nested arrays during multipart encoding.
+ - **FIX**: preserve merged multipart scalar types.
+ - **FIX**: preserve oneOf form field encodings.
+ - **FIX**: preserve nonnullable fields in copyWith.
+ - **FIX**: ignore charset when matching application/json responses.
+ - **FIX**: encode styled query parameter names.
+ - **FIX**: interpolate enum decoding diagnostics.
+ - **FIX**(tonik_generate): encode required nullable parameters.
+ - **FIX**: encode BigDecimal values in plain notation.
+ - **FIX**: serialize primitive values in nested allOf unions.
+ - **FIX**: encode array values in composed form fields.
+ - **FIX**: preserve nested properties in composed JSON models.
+ - **FIX**: correct multipart array and style encoding.
+ - **FIX**: preserve parameter reference descriptions.
+ - **FIX**: reconcile discriminator and list alias fixtures.
+ - **FIX**: preserve document metadata during content type normalization.
+ - **FIX**: encode mapped JSON request bodies correctly with Dio.
+ - **FIX**: encode nullable form bodies safely.
+ - **FIX**: reserve model names before parallel generation.
+ - **FIX**: preserve leading newlines in generated literals.
+ - **FIX**: sanitize media type subclass names.
+ - **FIX**: qualify generated instance field reads.
+ - **FIX**: prevent field shadowing in generated hash codes.
+ - **FIX**: preserve spec names in exception messages.
+ - **FIX**: keep multiline documentation inside comments.
+ - **FIX**: serialize generated pubspec with a YAML writer.
+ - **FIX**: reconcile discriminator aliases with current references.
+ - **FIX**: encode dynamic arrays and immutable JSON bodies.
+ - **FIX**(tonik_generate): retain list fixtures alongside collection aliases.
+ - **FIX**: avoid variant name cache hash collisions.
+ - **FIX**: reuse JSON codecs and preserve explicit null bodies.
+ - **FIX**: preserve response status precedence.
+ - **FEAT**: add JSON-seq streaming and recoverable item errors.
+ - **FEAT**: support dynamic multipart root maps.
+ - **FEAT**: support origins for relative server URLs.
+ - **FEAT**: add typed streaming responses.
+
+#### `tonik` - `v0.11.0`
+
+ - **REFACTOR**: require explicit core constructor properties.
+ - **FIX**: recognize OAS 3.2 and document current support.
+ - **FIX**: report invalid configuration values clearly.
+ - **FEAT**: require explicit overwrite for non-empty CLI destinations.
+ - **FEAT**: configure streaming content types.
+ - **FEAT**: add JSON-seq streaming and recoverable item errors.
+ - **FEAT**: add typed streaming responses.
+
+
 ## 2026-09-07
 
 ### Changes

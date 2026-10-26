@@ -1,3 +1,76 @@
+## 0.11.0
+
+ - **REFACTOR**: simplify multipart dynamic validation.
+ - **REFACTOR**: model named multipart layout in core.
+ - **REFACTOR**: simplify named multipart planning.
+ - **REFACTOR**: simplify multipart file emission.
+ - **REFACTOR**(tonik_generate): share named multipart field discovery.
+ - **REFACTOR**: require explicit core constructor properties.
+ - **REFACTOR**: inject streaming generator dependencies.
+ - **PERF**: generate copyWith as typed functions.
+ - **FIX**: preserve response header text and quoted values.
+ - **FIX**(tonik_generate): merge current schemas for list parameters.
+ - **FIX**(tonik_generate): merge current equality handling for aliases.
+ - **FIX**: preserve nullable anyOf members.
+ - **FIX**(tonik_generate): reconcile value equality with main.
+ - **FIX**(tonik_generate): reconcile list parameter aliases with main.
+ - **FIX**(tonik_generate): reconcile collection aliases with main.
+ - **FIX**(tonik_generate): compare free-form values deeply.
+ - **FIX**: preserve discriminator mapping aliases.
+ - **FIX**(tonik_generate): support aliased list properties in parameters.
+ - **FIX**(tonik_generate): resolve collection aliases in anyOf models.
+ - **FIX**: preserve literal percent keys in simple objects.
+ - **FIX**: preserve equals signs in exploded object values.
+ - **FIX**: restore binary form decoding.
+ - **FIX**: safely inject oneOf JSON discriminators.
+ - **FIX**: resolve allOf union merge conflicts.
+ - **FIX**: reconcile repeated multipart array values.
+ - **FIX**: include referenced responses in Accept headers.
+ - **FIX**: preserve borrowed Dio client base URLs.
+ - **FIX**: escape server variable enum field collisions.
+ - **FIX**: preserve literal multipart header values.
+ - **FIX**: form-encode multipart map parts on both transports.
+ - **FIX**: percent-encode reserved URI punctuation.
+ - **FIX**: preserve literal multipart array values.
+ - **FIX**: use value equality for collection response wrappers.
+ - **FIX**: apply response charset fallback across media types.
+ - **FIX**: reject nested arrays during multipart encoding.
+ - **FIX**: preserve merged multipart scalar types.
+ - **FIX**: preserve oneOf form field encodings.
+ - **FIX**: preserve nonnullable fields in copyWith.
+ - **FIX**: ignore charset when matching application/json responses.
+ - **FIX**: encode styled query parameter names.
+ - **FIX**: interpolate enum decoding diagnostics.
+ - **FIX**(tonik_generate): encode required nullable parameters.
+ - **FIX**: encode BigDecimal values in plain notation.
+ - **FIX**: serialize primitive values in nested allOf unions.
+ - **FIX**: encode array values in composed form fields.
+ - **FIX**: preserve nested properties in composed JSON models.
+ - **FIX**: correct multipart array and style encoding.
+ - **FIX**: preserve parameter reference descriptions.
+ - **FIX**: reconcile discriminator and list alias fixtures.
+ - **FIX**: preserve document metadata during content type normalization.
+ - **FIX**: encode mapped JSON request bodies correctly with Dio.
+ - **FIX**: encode nullable form bodies safely.
+ - **FIX**: reserve model names before parallel generation.
+ - **FIX**: preserve leading newlines in generated literals.
+ - **FIX**: sanitize media type subclass names.
+ - **FIX**: qualify generated instance field reads.
+ - **FIX**: prevent field shadowing in generated hash codes.
+ - **FIX**: preserve spec names in exception messages.
+ - **FIX**: keep multiline documentation inside comments.
+ - **FIX**: serialize generated pubspec with a YAML writer.
+ - **FIX**: reconcile discriminator aliases with current references.
+ - **FIX**: encode dynamic arrays and immutable JSON bodies.
+ - **FIX**(tonik_generate): retain list fixtures alongside collection aliases.
+ - **FIX**: avoid variant name cache hash collisions.
+ - **FIX**: reuse JSON codecs and preserve explicit null bodies.
+ - **FIX**: preserve response status precedence.
+ - **FEAT**: add JSON-seq streaming and recoverable item errors.
+ - **FEAT**: support dynamic multipart root maps.
+ - **FEAT**: support origins for relative server URLs.
+ - **FEAT**: add typed streaming responses.
+
 ## 0.10.0
 
 > Note: This release has breaking changes.

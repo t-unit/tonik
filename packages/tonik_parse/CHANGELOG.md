@@ -1,3 +1,31 @@
+## 0.11.0
+
+ - **REFACTOR**: simplify named multipart planning.
+ - **REFACTOR**: model named multipart layout in core.
+ - **REFACTOR**: require explicit core constructor properties.
+ - **FIX**: preserve nullable anyOf members.
+ - **FIX**: preserve access flags on referenced properties.
+ - **FIX**: preserve nested properties in composed JSON models.
+ - **FIX**: correct multipart array and style encoding.
+ - **FIX**: recognize OAS 3.2 and document current support.
+ - **FIX**: reconcile discriminator aliases with current references.
+ - **FIX**: keep recursive definition placeholders internal.
+ - **FIX**: preserve primitive alias annotations.
+ - **FIX**: resolve complete local JSON pointers.
+ - **FIX**: preserve null types in arrays and inline unions.
+ - **FIX**: reuse forward parameter and header components.
+ - **FIX**: preserve discriminator mapping aliases.
+ - **FIX**: preserve values in typeless enum schemas.
+ - **FIX**: support optional document fields and extensions.
+ - **FIX**: honor component names in discriminator mappings.
+ - **FIX**: preserve definition reference identity.
+ - **FIX**: preserve parameter reference descriptions.
+ - **FEAT**: configure streaming content types.
+ - **FEAT**: add JSON-seq streaming and recoverable item errors.
+ - **FEAT**: add typed streaming responses.
+ - **FEAT**: support dynamic multipart root maps.
+ - **DOCS**: trim parser support summary.
+
 ## 0.10.0
 
 > Note: This release has breaking changes.

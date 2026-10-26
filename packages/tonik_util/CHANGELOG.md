@@ -1,3 +1,32 @@
+## 0.11.0
+
+ - **REVERT**: undo cancellation simplification on unrelated branch.
+ - **REFACTOR**: simplify stream subscription cancellation.
+ - **REFACTOR**: simplify stream subscription cancellation.
+ - **FIX**: preserve timezone offset seconds in parsing and encoding.
+ - **FIX**: encode array values in composed form fields.
+ - **FIX**: preserve nested properties in composed JSON models.
+ - **FIX**: normalize sub-minute datetime offsets when encoding.
+ - **FIX**: correct multipart array and style encoding.
+ - **FIX**: normalize malformed form decoding errors.
+ - **FIX**: preserve literal percent keys in simple objects.
+ - **FIX**: preserve equals signs in exploded object values.
+ - **FIX**: restore binary form decoding.
+ - **FIX**: preserve response header text and quoted values.
+ - **FIX**: percent-encode reserved URI punctuation.
+ - **FIX**: preserve null slots in delimited lists.
+ - **FIX**: preserve hour-only datetime offsets.
+ - **FIX**: apply response charset fallback across media types.
+ - **FIX**: omit equals for empty exploded matrix values.
+ - **FIX**: encode styled query parameter names.
+ - **FIX**: align date year formatting with DateTime.
+ - **FIX**: honor explode for untyped form query parameters.
+ - **FIX**(tonik_util): accept signed and extended date years.
+ - **FIX**(tonik_util): pad non-UTC DateTime years.
+ - **FIX**: encode BigDecimal values in plain notation.
+ - **FEAT**: add JSON-seq streaming and recoverable item errors.
+ - **FEAT**: add typed streaming responses.
+
 ## 0.10.0
 
 > Note: This release has breaking changes.

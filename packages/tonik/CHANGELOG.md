@@ -1,3 +1,16 @@
+## 0.11.0
+
+ - **REFACTOR**: require explicit core constructor properties.
+ - **FIX**: recognize OAS 3.2 and document current support.
+ - **FIX**: report invalid configuration values clearly.
+ - **FEAT**: require explicit overwrite for non-empty CLI destinations.
+ - **FEAT**: configure streaming content types.
+ - **FEAT**: add JSON-seq streaming and recoverable item errors.
+ - **FEAT**: add typed streaming responses.
+
+
+For full changes across all packages, see the [complete changelog](https://github.com/t-unit/tonik/blob/main/CHANGELOG.md).
+
 ## 0.10.0
 
 > Note: This release has breaking changes.

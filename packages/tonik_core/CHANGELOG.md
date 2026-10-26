@@ -1,3 +1,24 @@
+## 0.11.0
+
+ - **REFACTOR**: simplify named multipart planning.
+ - **REFACTOR**: model named multipart layout in core.
+ - **REFACTOR**: require explicit core constructor properties.
+ - **FIX**: reconcile discriminator aliases with current references.
+ - **FIX**: preserve primitive alias annotations.
+ - **FIX**: resolve complete local JSON pointers.
+ - **FIX**: preserve discriminator mapping aliases.
+ - **FIX**: guard composite encoding shape traversal against cycles.
+ - **FIX**: apply schema deprecation policies to aliases.
+ - **FIX**: apply deprecation policies to cookie parameters.
+ - **FIX**: normalize operation bodies outside registries.
+ - **FIX**: isolate operation parameter name overrides.
+ - **FIX**: apply parameter name overrides by wire name.
+ - **FIX**: preserve parameter reference descriptions.
+ - **FIX**: preserve document metadata during content type normalization.
+ - **FEAT**: configure streaming content types.
+ - **FEAT**: add JSON-seq streaming and recoverable item errors.
+ - **FEAT**: add typed streaming responses.
+
 ## 0.10.0
 
 > Note: This release has breaking changes.
