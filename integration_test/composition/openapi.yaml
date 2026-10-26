@@ -1389,6 +1389,35 @@ components:
           counter: Counter
           gauge: Gauge
 
+    AllOfUnionDisplayName:
+      allOf:
+        - anyOf:
+            - type: string
+            - type: object
+              required: [text]
+              properties:
+                text:
+                  type: string
+
+    AllOfUnionTags:
+      allOf:
+        - oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+
+    AllOfMatchingUnions:
+      allOf:
+        - $ref: '#/components/schemas/AllOfUnionTags'
+        - $ref: '#/components/schemas/AllOfUnionDisplayName'
+
+    AllOfUnionWithExtras:
+      allOf:
+        - $ref: '#/components/schemas/AllOfUnionDisplayName'
+      additionalProperties:
+        type: string
+
     ContactDetails:
       type: object
       required: [details]
@@ -1476,3 +1505,10 @@ components:
           properties:
             email:
               type: string
+
+    AllOfUnionNestedDetails:
+      allOf:
+        - oneOf:
+            - type: string
+            - $ref: '#/components/schemas/GivenNameDetails'
+        - $ref: '#/components/schemas/FamilyNameDetails'

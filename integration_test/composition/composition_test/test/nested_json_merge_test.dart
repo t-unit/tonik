@@ -21,6 +21,16 @@ void main() {
     });
   });
 
+  test('allOf merges nested objects selected by a scalar or object union', () {
+    final value = AllOfUnionNestedDetails.fromJson(const {
+      'details': {'givenName': 'Ada', 'familyName': 'Lovelace'},
+    });
+
+    expect(value.toJson(), {
+      'details': {'givenName': 'Ada', 'familyName': 'Lovelace'},
+    });
+  });
+
   test('anyOf preserves sibling schema fields and nested branch fields', () {
     final value = ContactDetails.fromJson(const {
       'details': {

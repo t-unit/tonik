@@ -4554,13 +4554,31 @@ class Holder {
       );
     }
     final _$map = <String, Object?>{};
+    final _$values = <Object?>[];
+    var _$hasMap = false;
     final _$idOrUserJson = this.idOrUser.toJson();
-    if (_$idOrUserJson is! Map<String, Object?>) {
-      throw EncodingException(
-        'Expected idOrUser.toJson() to return Map<String, Object?>, got ${_$idOrUserJson.runtimeType}',
-      );
+    if (_$idOrUserJson is Map<String, Object?>) {
+      _$hasMap = true;
+      mergeJsonObject(_$map, _$idOrUserJson);
+    } else {
+      _$values.add(_$idOrUserJson);
     }
-    mergeJsonObject(_$map, _$idOrUserJson);
+    if (_$values.isNotEmpty) {
+      if (_$hasMap || this.additionalProperties.isNotEmpty) {
+        throw EncodingException(
+          r'Cannot encode DynamicTreeBag: mixing JSON objects with other values is not supported',
+        );
+      }
+      const deepEquals = DeepCollectionEquality();
+      for (var i = 1; i < _$values.length; i++) {
+        if (!deepEquals.equals(_$values.first, _$values[i])) {
+          throw EncodingException(
+            r'Inconsistent allOf JSON encoding: all values must encode to the same result',
+          );
+        }
+      }
+      return _$values.first;
+    }
     _$map.addAll(
       this.additionalProperties.map((k, v) => MapEntry(k, _$encodeTree(v))),
     );
@@ -6249,15 +6267,34 @@ factory ExtendedItem.fromJson(Object? json) {
               );
             }
             final _$map = <String, Object?>{};
+    final _$values = <Object?>[];
+    var _$hasMap = false;
             final _$mapJson = this.map;
-            mergeJsonObject(_$map, _$mapJson);
+            _$hasMap = true;
+    mergeJsonObject(_$map, _$mapJson);
             final _$statusJson = this.status.toJson();
-            if (_$statusJson is! Map<String, Object?>) {
-              throw EncodingException(
-                'Expected status.toJson() to return Map<String, Object?>, got ${_$statusJson.runtimeType}',
-              );
-            }
-            mergeJsonObject(_$map, _$statusJson);
+            if (_$statusJson is Map<String, Object?>) {
+      _$hasMap = true;
+      mergeJsonObject(_$map, _$statusJson);
+    } else {
+      _$values.add(_$statusJson);
+    }
+    if (_$values.isNotEmpty) {
+      if (_$hasMap) {
+        throw EncodingException(
+          r'Cannot encode DynamicWithMap: mixing JSON objects with other values is not supported',
+        );
+      }
+      const deepEquals = DeepCollectionEquality();
+      for (var i = 1; i < _$values.length; i++) {
+        if (!deepEquals.equals(_$values.first, _$values[i])) {
+          throw EncodingException(
+            r'Inconsistent allOf JSON encoding: all values must encode to the same result',
+          );
+        }
+      }
+      return _$values.first;
+    }
             return _$map;
           }
         ''';
