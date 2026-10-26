@@ -25,6 +25,32 @@ void main() {
     );
   }
 
+  test('referenced readOnly property is omitted from a JSON request', () async {
+    final api = buildApi(responseStatus: '200');
+    final profile = Profile.fromJson(const {'id': 42, 'name': 'Ada'});
+    expect(profile.id, 42);
+
+    final response = await api.createProfile(body: profile);
+
+    requireSuccess(response);
+    final request = await imposterServer.takeRequest();
+    expect(jsonDecode(request.body!), {'name': 'Ada'});
+  });
+
+  test('referenced writeOnly property respects serialization direction', () {
+    final profile = Profile.fromJson(const {
+      'id': 42,
+      'name': 'Ada',
+      'password': 'response-secret',
+    });
+
+    expect(profile.password, isNull);
+    expect(const Profile(name: 'Ada', password: 'request-secret').toJson(), {
+      'name': 'Ada',
+      'password': 'request-secret',
+    });
+  });
+
   group('User model - mixed readOnly/writeOnly', () {
     group('toJson excludes readOnly properties', () {
       test('request body does not contain readOnly fields', () async {
