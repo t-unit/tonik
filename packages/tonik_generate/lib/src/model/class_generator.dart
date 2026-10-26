@@ -846,7 +846,8 @@ class const ClassGenerator({
           (p) =>
               p.property.isWriteOnly &&
               p.property.isRequired &&
-              !p.property.isNullable,
+              !p.property.isNullable &&
+              !p.property.model.isEffectivelyNullable,
         )
         .toList();
 
@@ -856,7 +857,10 @@ class const ClassGenerator({
       final property = prop.property;
       final requiredInRequest = property.isRequired && !property.isReadOnly;
       final forceNonNullReceiver =
-          property.isWriteOnly && requiredInRequest && !property.isNullable;
+          property.isWriteOnly &&
+          requiredInRequest &&
+          !property.isNullable &&
+          !property.model.isEffectivelyNullable;
 
       final valueBuilt = buildToJsonPropertyExpression(
         refer('this').property(name),

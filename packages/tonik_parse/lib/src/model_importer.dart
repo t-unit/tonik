@@ -152,6 +152,23 @@ class ModelImporter._(
       log.fine('Pass 2: Populating $name');
       _populateShell(name, schema, context);
     }
+
+    // Referenced members can be populated after the union that contains them.
+    for (final model in models.whereType<AnyOfModel>()) {
+      model.isNullable |= _hasNullableAnyOfMember(model, <Model>{});
+    }
+  }
+
+  bool _hasNullableAnyOfMember(Model model, Set<Model> visited) {
+    if (!visited.add(model)) return false;
+    if (model.isEffectivelyNullable) return true;
+    return switch (model) {
+      AliasModel(:final model) => _hasNullableAnyOfMember(model, visited),
+      AnyOfModel(:final models) => models.any(
+        (member) => _hasNullableAnyOfMember(member.model, visited),
+      ),
+      _ => false,
+    };
   }
 
   /// Creates an empty model shell for a named schema without resolving refs.
@@ -882,6 +899,9 @@ class ModelImporter._(
       }
       final model = _resolveCompositeSubModel(anyOfSchema, modelContext, shell);
       if (model != null) {
+        shell.isNullable |=
+            (anyOfSchema.isNullable ?? anyOfSchema.hasNullType) ||
+            model.isEffectivelyNullable;
         resolvedModels.add((
           discriminatorValue: _getDiscriminatorValue(
             discriminator: effectiveDiscriminator,
@@ -1923,6 +1943,9 @@ class ModelImporter._(
         enclosingModel ?? anyOfModel,
       );
       if (member != null) {
+        anyOfModel.isNullable |=
+            (anyOfSchema.isNullable ?? anyOfSchema.hasNullType) ||
+            member.isEffectivelyNullable;
         resolvedModels.add((
           discriminatorValue: _getDiscriminatorValue(
             discriminator: effectiveDiscriminator,
