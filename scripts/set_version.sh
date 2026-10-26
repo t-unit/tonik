@@ -37,7 +37,7 @@ fi
 VERSION=$1
 
 if [ "$DRY_RUN" = true ]; then
-  echo "🔍 DRY RUN MODE - Generator update will be previewed and tests run without changing files"
+  echo "🔍 DRY RUN MODE - Version updates will be previewed and tests run without changing files"
 fi
 
 echo "🔄 Setting version to $VERSION"
@@ -130,26 +130,30 @@ For full changes across all packages, see the [complete changelog](https://githu
   echo ""
 else
   echo "🔄 Skipping melos version (dry-run mode)"
-  echo "  Note: Package pubspecs and generator are unchanged"
+  echo "  Note: Package pubspecs, generator, and test expectations are unchanged"
   echo ""
 fi
 
-echo "🔍 Updating pubspec_generator with new version..."
+echo "🔍 Updating generator and test expectations with new version..."
 GENERATOR_FILE="packages/tonik_generate/lib/src/pubspec_generator.dart"
+GENERATOR_TEST_FILE="packages/tonik_generate/test/src/pubspec_generator_test.dart"
 if [ "$DRY_RUN" = true ]; then
-  GENERATOR_PREVIEW="$(mktemp)"
-  trap 'rm -f "$GENERATOR_PREVIEW"' EXIT
-  cp "$GENERATOR_FILE" "$GENERATOR_PREVIEW"
-  update_generated_runtime_version "$GENERATOR_PREVIEW" "$VERSION"
-  echo "✅ Verified generator update to ^$VERSION (preview only)"
+  VERSION_PREVIEW_DIR="$(mktemp -d)"
+  trap 'rm -rf "$VERSION_PREVIEW_DIR"' EXIT
+  cp "$GENERATOR_FILE" "$VERSION_PREVIEW_DIR/generator.dart"
+  cp "$GENERATOR_TEST_FILE" "$VERSION_PREVIEW_DIR/generator_test.dart"
+  update_generated_runtime_version "$VERSION_PREVIEW_DIR/generator.dart" "$VERSION"
+  update_generated_runtime_version "$VERSION_PREVIEW_DIR/generator_test.dart" "$VERSION" 3
+  echo "✅ Verified generator and test expectation updates to ^$VERSION (preview only)"
 else
   update_generated_runtime_version "$GENERATOR_FILE" "$VERSION"
-  if [ -n "$(git diff -- "$GENERATOR_FILE")" ]; then
-    echo "✅ Updated pubspec_generator with version $VERSION"
-    git add "$GENERATOR_FILE"
+  update_generated_runtime_version "$GENERATOR_TEST_FILE" "$VERSION" 3
+  if [ -n "$(git diff -- "$GENERATOR_FILE" "$GENERATOR_TEST_FILE")" ]; then
+    echo "✅ Updated generator and test expectations with version $VERSION"
+    git add "$GENERATOR_FILE" "$GENERATOR_TEST_FILE"
     git commit --amend --no-edit
   else
-    echo "✅ pubspec_generator already uses ^$VERSION"
+    echo "✅ Generator and test expectations use ^$VERSION"
   fi
 fi
 echo ""

@@ -3,6 +3,7 @@
 update_generated_runtime_version() {
   local generator_file="$1"
   local version="$2"
+  local expected_count="${3:-1}"
   local pattern="^[[:space:]]*'tonik_util': '\\^[^']+',?$"
   local expected="'tonik_util': '^$version'"
   local match_count
@@ -12,17 +13,17 @@ update_generated_runtime_version() {
     return 1
   fi
   match_count=$(grep -Ec "$pattern" "$generator_file") || true
-  if [ "$match_count" != 1 ]; then
-    echo "Error: expected exactly one generated tonik_util constraint in $generator_file; found $match_count" >&2
+  if [ "$match_count" != "$expected_count" ]; then
+    echo "Error: expected $expected_count tonik_util constraints in $generator_file; found $match_count" >&2
     return 1
   fi
 
   sed -i.bak -E "s/^([[:space:]]*'tonik_util': '\\^)[^']+(',?)$/\1$version\2/" "$generator_file" || return 1
   rm "$generator_file.bak" || return 1
-  local actual
-  actual=$(grep -E "$pattern" "$generator_file" | sed -E 's/^[[:space:]]*//; s/,$//')
-  if [ "$actual" != "$expected" ]; then
-    echo "Error: generated tonik_util constraint does not match ^$version" >&2
+  local updated_count
+  updated_count=$(grep -E "$pattern" "$generator_file" | sed -E 's/^[[:space:]]*//; s/,$//' | grep -Fxc "$expected") || true
+  if [ "$updated_count" != "$expected_count" ]; then
+    echo "Error: tonik_util constraints in $generator_file do not match ^$version" >&2
     return 1
   fi
 }
