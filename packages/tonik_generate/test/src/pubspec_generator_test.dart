@@ -131,7 +131,7 @@ void main() {
           'collection': '^1.19.1',
           'dio': '^5.11.1',
           'meta': '^1.19.0',
-          'tonik_util': '^0.11.0',
+          'tonik_util': '^0.11.1',
         },
         'dev_dependencies': {'lints': '^6.1.0'},
       });
@@ -294,14 +294,14 @@ void main() {
         'collection': '^1.19.1',
         'dio': '^5.11.1',
         'meta': '^1.19.0',
-        'tonik_util': '^0.11.0',
+        'tonik_util': '^0.11.1',
       });
       expect(httpPubspec['dependencies'], {
         'big_decimal': '^0.7.0',
         'collection': '^1.19.1',
         'http': '^1.6.0',
         'meta': '^1.19.0',
-        'tonik_util': '^0.11.0',
+        'tonik_util': '^0.11.1',
       });
     });
 

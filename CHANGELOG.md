@@ -15,6 +15,48 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`tonik_util` - `v0.11.1`](#tonik_util---v0111)
+ - [`tonik_core` - `v0.11.1`](#tonik_core---v0111)
+ - [`tonik_parse` - `v0.11.1`](#tonik_parse---v0111)
+ - [`tonik_generate` - `v0.11.1`](#tonik_generate---v0111)
+ - [`tonik` - `v0.11.1`](#tonik---v0111)
+
+---
+
+#### `tonik_util` - `v0.11.1`
+
+ - Bump "tonik_util" to `0.11.1`.
+
+#### `tonik_core` - `v0.11.1`
+
+ - Bump "tonik_core" to `0.11.1`.
+
+#### `tonik_parse` - `v0.11.1`
+
+ - Bump "tonik_parse" to `0.11.1`.
+
+#### `tonik_generate` - `v0.11.1`
+
+ - **FIX**: update generator expectations during version bumps.
+ - **FIX**: synchronize generated runtime version during releases.
+
+#### `tonik` - `v0.11.1`
+
+ - Bump "tonik" to `0.11.1`.
+
+
+## 2026-10-26
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`tonik_util` - `v0.11.0`](#tonik_util---v0110)
  - [`tonik_core` - `v0.11.0`](#tonik_core---v0110)
  - [`tonik_parse` - `v0.11.0`](#tonik_parse---v0110)

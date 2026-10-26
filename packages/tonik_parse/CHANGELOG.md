@@ -1,3 +1,7 @@
+## 0.11.1
+
+ - Bump "tonik_parse" to `0.11.1`.
+
 ## 0.11.0
 
  - **REFACTOR**: simplify named multipart planning.

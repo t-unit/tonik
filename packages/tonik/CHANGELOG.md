@@ -1,3 +1,10 @@
+## 0.11.1
+
+ - Bump "tonik" to `0.11.1`.
+
+
+For full changes across all packages, see the [complete changelog](https://github.com/t-unit/tonik/blob/main/CHANGELOG.md).
+
 ## 0.11.0
 
  - **REFACTOR**: require explicit core constructor properties.

@@ -1,3 +1,7 @@
+## 0.11.1
+
+ - Bump "tonik_util" to `0.11.1`.
+
 ## 0.11.0
 
  - **REVERT**: undo cancellation simplification on unrelated branch.

@@ -1,3 +1,8 @@
+## 0.11.1
+
+ - **FIX**: update generator expectations during version bumps.
+ - **FIX**: synchronize generated runtime version during releases.
+
 ## 0.11.0
 
  - **REFACTOR**: simplify multipart dynamic validation.
