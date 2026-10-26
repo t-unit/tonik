@@ -475,20 +475,73 @@ void main() {
       expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
     });
 
-    test('ClassModel body emits explode true for an array property with no '
+    test('ClassModel body explodes union arrays with mixed item schemas and no '
         'spec encoding', () {
       final tags = Property(
         name: 'tags',
-        model: ListModel(
-          content: StringModel(context: context),
+        model: OneOfModel(
+          name: 'Tags',
+          models: [
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (
+              discriminatorValue: null,
+              model: ListModel(
+                content: OneOfModel(
+                  name: 'Tag',
+                  models: [
+                    (
+                      discriminatorValue: null,
+                      model: StringModel(context: context),
+                    ),
+                    (
+                      discriminatorValue: null,
+                      model: ClassModel(
+                        name: 'TagObject',
+                        properties: [],
+                        context: context,
+                        examples: const [],
+                        isDeprecated: false,
+                        nameOverride: null,
+                        description: null,
+                        additionalPropertiesPolicy: null,
+                        isNullable: false,
+                        isReadOnly: false,
+                        isWriteOnly: false,
+                      ),
+                    ),
+                  ],
+                  context: context,
+                  examples: const [],
+                  isDeprecated: false,
+                  nameOverride: null,
+                  description: null,
+                  discriminator: null,
+                  isNullable: false,
+                  isReadOnly: false,
+                  isWriteOnly: false,
+                  defaultValue: null,
+                ),
+                context: context,
+                examples: const [],
+                name: null,
+                nameOverride: null,
+                isNullable: false,
+                isContentNullable: false,
+                isReadOnly: false,
+                isWriteOnly: false,
+              ),
+            ),
+          ],
           context: context,
           examples: const [],
-          name: null,
+          isDeprecated: false,
           nameOverride: null,
+          description: null,
+          discriminator: null,
           isNullable: false,
-          isContentNullable: false,
           isReadOnly: false,
           isWriteOnly: false,
+          defaultValue: null,
         ),
         isRequired: true,
         isNullable: false,

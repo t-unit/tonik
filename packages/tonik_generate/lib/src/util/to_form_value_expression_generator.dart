@@ -120,7 +120,7 @@ Expression? _fieldEncodingsLiteral(
     final fieldEncoding = encodingByName[property.name];
     final allowReserved = fieldEncoding?.allowReserved ?? false;
     final explode =
-        _isSimpleContentList(property.model) && _explodeDefault(fieldEncoding);
+        _canEncodeArray(property.model) && _explodeDefault(fieldEncoding);
 
     if (!allowReserved && !explode) continue;
 
@@ -152,9 +152,18 @@ List<Property> _collectFormProperties(Model model) {
   }
 }
 
-bool _isSimpleContentList(Model model) {
+bool _canEncodeArray(Model model, [Set<Model>? visited]) {
   final resolved = model.resolved;
-  return resolved is ListModel && resolved.hasSimpleContent;
+  final seen = visited ?? <Model>{};
+  if (!seen.add(resolved)) return false;
+  return switch (resolved) {
+    // Composed values use runtime flat-value checks instead of list codecs.
+    ListModel() => visited != null || resolved.hasSimpleContent,
+    CompositeModel() => resolved.containedModels.any(
+      (member) => member.resolved is AnyModel || _canEncodeArray(member, seen),
+    ),
+    _ => false,
+  };
 }
 
 Expression _entriesToBody(Expression entries) {

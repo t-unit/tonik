@@ -262,7 +262,7 @@ void main() {
         if (_$mapValues.isNotEmpty) {
           final _$map = <String, Object?>{};
           for (final _$m in _$mapValues) {
-            _$map.addAll(_$m);
+            mergeJsonObject(_$map, _$m);
           }
           final _$discValue = _$discriminatorValue;
           if (_$discValue != null) {
@@ -403,7 +403,7 @@ void main() {
         if (_$mapValues.isNotEmpty) {
           final _$map = <String, Object?>{};
           for (final _$m in _$mapValues) {
-            _$map.addAll(_$m);
+            mergeJsonObject(_$map, _$m);
           }
           return _$map;
         }
@@ -487,7 +487,7 @@ void main() {
         if (_$mapValues.isNotEmpty) {
           final _$map = <String, Object?>{};
           for (final _$m in _$mapValues) {
-            _$map.addAll(_$m);
+            mergeJsonObject(_$map, _$m);
           }
           final _$discValue = _$discriminatorValue;
           if (_$discValue != null) {
@@ -596,7 +596,7 @@ void main() {
         if (_$mapValues.isNotEmpty) {
           final _$map = <String, Object?>{};
           for (final _$m in _$mapValues) {
-            _$map.addAll(_$m);
+            mergeJsonObject(_$map, _$m);
           }
           final _$discValue = _$discriminatorValue;
           if (_$discValue != null) {
@@ -673,7 +673,7 @@ void main() {
         if (_$mapValues.isNotEmpty) {
           final _$map = <String, Object?>{};
           for (final _$m in _$mapValues) {
-            _$map.addAll(_$m);
+            mergeJsonObject(_$map, _$m);
           }
           return _$map;
         }

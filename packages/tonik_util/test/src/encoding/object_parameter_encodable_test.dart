@@ -429,7 +429,7 @@ void main() {
             textEncoding: utf8,
             fieldEncodings: const {'scalar': FormFieldEncoding(explode: true)},
           ),
-          <ParameterEntry>[],
+          [(name: 'scalar', value: '')],
         );
         for (final explode in [true, false]) {
           expect(

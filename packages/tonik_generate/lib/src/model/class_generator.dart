@@ -846,7 +846,8 @@ class const ClassGenerator({
           (p) =>
               p.property.isWriteOnly &&
               p.property.isRequired &&
-              !p.property.isNullable,
+              !p.property.isNullable &&
+              !p.property.model.isEffectivelyNullable,
         )
         .toList();
 
@@ -856,7 +857,10 @@ class const ClassGenerator({
       final property = prop.property;
       final requiredInRequest = property.isRequired && !property.isReadOnly;
       final forceNonNullReceiver =
-          property.isWriteOnly && requiredInRequest && !property.isNullable;
+          property.isWriteOnly &&
+          requiredInRequest &&
+          !property.isNullable &&
+          !property.model.isEffectivelyNullable;
 
       final valueBuilt = buildToJsonPropertyExpression(
         refer('this').property(name),
@@ -1117,14 +1121,17 @@ class const ClassGenerator({
     );
 
     if (hasComplexProperties) {
-      final allComplexAreSimpleLists = properties
+      final allComplexAreFlatValues = properties
           .where((p) => p.property.model.encodingShape == EncodingShape.complex)
           .every((p) {
             final resolved = p.property.model.resolved;
-            return resolved is ListModel && resolved.hasSimpleContent;
+            return (resolved is ListModel && resolved.hasSimpleContent) ||
+                resolved is OneOfModel ||
+                resolved is AnyOfModel ||
+                resolved is AllOfModel;
           });
 
-      if (allComplexAreSimpleLists) {
+      if (allComplexAreFlatValues) {
         return _buildListParameterPropertiesMethod(
           className,
           properties,
@@ -1321,6 +1328,24 @@ class const ClassGenerator({
         continue;
       }
 
+      if (resolvedModel is AnyModel) {
+        propertyAssignments.addAll([
+          Code('if (this.$name != null) {'),
+          _scalarPropertyAssignment(
+            propertyName,
+            refer(
+              'encodeUnknownFlatScalar',
+              'package:tonik_util/tonik_util.dart',
+            ).call(
+              [refer('this').property(name).nullChecked],
+              {'context': specLiteralString('$className.$propertyName')},
+            ),
+          ),
+          const Code('}'),
+        ]);
+        continue;
+      }
+
       if (fieldModel.encodingShape == EncodingShape.simple) {
         propertyAssignments.addAll(
           _buildScalarPropertyAssignment(
@@ -1370,6 +1395,18 @@ class const ClassGenerator({
             ..add(assignmentExpr.statement)
             ..add(const Code('}'));
         }
+      } else if (resolvedModel is OneOfModel ||
+          resolvedModel is AnyOfModel ||
+          resolvedModel is AllOfModel) {
+        propertyAssignments.addAll(
+          _buildComposedPropertyAssignment(
+            name: name,
+            propertyName: propertyName,
+            isRequired: isRequired,
+            isNullable: isNullable,
+            isFieldNullable: isFieldNullable,
+          ),
+        );
       }
     }
 
@@ -1407,6 +1444,46 @@ class const ClassGenerator({
           raw: true,
         ).code,
     );
+  }
+
+  List<Code> _buildComposedPropertyAssignment({
+    required String name,
+    required String propertyName,
+    required bool isRequired,
+    required bool isNullable,
+    required bool isFieldNullable,
+  }) {
+    final receiver = refer('this').property(name);
+    final value = isFieldNullable || !isRequired
+        ? receiver.nullChecked
+        : receiver;
+    final assignment = refer(r'_$result')
+        .index(specLiteralString(propertyName))
+        .assign(
+          refer(
+            'encodeAnyValueToPropertyValue',
+            'package:tonik_util/tonik_util.dart',
+          ).call(
+            [value.property('toJson').call([])],
+            {'allowEmpty': refer('allowEmpty')},
+          ),
+        )
+        .statement;
+
+    if (isRequired && !isNullable) {
+      return [
+        if (isFieldNullable) ...[
+          Code('if (this.$name == null) {'),
+          generateEncodingExceptionExpression(
+            'Required property $propertyName is null.',
+            raw: true,
+          ).statement,
+          const Code('}'),
+        ],
+        assignment,
+      ];
+    }
+    return [Code('if (this.$name != null) {'), assignment, const Code('}')];
   }
 
   Method _buildMixedParameterPropertiesMethod(
@@ -1468,54 +1545,15 @@ class const ClassGenerator({
           ),
         );
       } else {
-        final isFieldNullable = isNullable || !isRequired;
-        final encodingShapeRef = refer(
-          'EncodingShape',
-          'package:tonik_util/tonik_util.dart',
+        propertyAssignments.addAll(
+          _buildComposedPropertyAssignment(
+            name: name,
+            propertyName: propertyName,
+            isRequired: isRequired,
+            isNullable: isNullable,
+            isFieldNullable: isFieldNullable,
+          ),
         );
-
-        Code mixedScalarAssign(Expression receiver) =>
-            _scalarPropertyAssignment(
-              propertyName,
-              refer(
-                'encodeAnyValueToString',
-                'package:tonik_util/tonik_util.dart',
-              ).call(
-                [receiver.property('toJson').call([])],
-                {'allowEmpty': refer('allowEmpty')},
-              ),
-            );
-
-        if (isFieldNullable) {
-          propertyAssignments.addAll([
-            Code('if (this.$name != null) {'),
-            Code('  if (this.$name!.currentEncodingShape == '),
-            encodingShapeRef.property('simple').code,
-            const Code(') {'),
-            mixedScalarAssign(refer('this').property(name).nullChecked),
-            const Code('} else {'),
-            generateEncodingExceptionExpression(
-              'parameterProperties not supported for $className: '
-              'contains complex types',
-              raw: true,
-            ).statement,
-            const Code('}}'),
-          ]);
-        } else {
-          propertyAssignments.addAll([
-            Code('if (this.$name.currentEncodingShape == '),
-            encodingShapeRef.property('simple').code,
-            const Code(') {'),
-            mixedScalarAssign(refer('this').property(name)),
-            const Code('} else {'),
-            generateEncodingExceptionExpression(
-              'parameterProperties not supported for $className: '
-              'contains complex types',
-              raw: true,
-            ).statement,
-            const Code('}'),
-          ]);
-        }
       }
     }
 

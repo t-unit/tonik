@@ -165,6 +165,79 @@ void main() {
     });
   });
 
+  test('inherits access flags from referenced property schemas', () {
+    final api = Importer().import({
+      'openapi': '3.0.4',
+      'info': {'title': 'Test', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Profile': {
+            'type': 'object',
+            'properties': {
+              'id': {r'$ref': '#/components/schemas/ServerId'},
+              'password': {r'$ref': '#/components/schemas/PasswordAlias'},
+              'name': {'type': 'string'},
+            },
+          },
+          'ServerId': {'type': 'integer', 'readOnly': true},
+          'PasswordAlias': {r'$ref': '#/components/schemas/Password'},
+          'Password': {'type': 'string', 'writeOnly': true},
+        },
+      },
+    });
+    final profile = api.models.whereType<ClassModel>().single;
+    final id = profile.properties.firstWhere((p) => p.name == 'id');
+    final password = profile.properties.firstWhere((p) => p.name == 'password');
+    final name = profile.properties.firstWhere((p) => p.name == 'name');
+
+    expect(id.isReadOnly, isTrue);
+    expect(id.isWriteOnly, isFalse);
+    expect(password.isWriteOnly, isTrue);
+    expect(password.isReadOnly, isFalse);
+    expect(name.isReadOnly, isFalse);
+    expect(name.isWriteOnly, isFalse);
+  });
+
+  test('inherits referenced access flags in an inline object', () {
+    final api = Importer().import({
+      'openapi': '3.1.0',
+      'info': {'title': 'Test', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Envelope': {
+            'type': 'object',
+            'properties': {
+              'profile': {
+                'type': 'object',
+                'properties': {
+                  'id': {
+                    r'$ref': '#/components/schemas/ServerIdAlias',
+                    'readOnly': false,
+                  },
+                  'password': {r'$ref': '#/components/schemas/Password'},
+                },
+              },
+            },
+          },
+          'ServerIdAlias': {r'$ref': '#/components/schemas/ServerId'},
+          'ServerId': {'type': 'integer', 'readOnly': true},
+          'Password': {'type': 'string', 'writeOnly': true},
+        },
+      },
+    });
+    final envelope = api.models.whereType<ClassModel>().firstWhere(
+      (model) => model.name == 'Envelope',
+    );
+    final profile = envelope.properties.single.model as ClassModel;
+    final id = profile.properties.firstWhere((p) => p.name == 'id');
+    final password = profile.properties.firstWhere((p) => p.name == 'password');
+
+    expect(id.isReadOnly, isTrue);
+    expect(password.isWriteOnly, isTrue);
+  });
+
   group('readOnly and writeOnly with explicit false', () {
     const explicitFalseSpec = {
       'openapi': '3.0.0',

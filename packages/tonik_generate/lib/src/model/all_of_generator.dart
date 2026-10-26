@@ -785,7 +785,8 @@ class const AllOfGenerator({
             toJsonBuilt.unsafeRawBody.code,
             const Code(';'),
             const Code(r'_$hasMap = true;'),
-            const Code(r'_$map.addAll('),
+            refer('mergeJsonObject', 'package:tonik_util/tonik_util.dart').code,
+            const Code(r'(_$map, '),
             refer(fieldNameJson).code,
             const Code(');'),
           ]);
@@ -800,7 +801,8 @@ class const AllOfGenerator({
             mapType.code,
             const Code(') {'),
             const Code(r'_$hasMap = true;'),
-            const Code(r'_$map.addAll('),
+            refer('mergeJsonObject', 'package:tonik_util/tonik_util.dart').code,
+            const Code(r'(_$map, '),
             refer(fieldNameJson).code,
             const Code(');'),
             const Code('} else {'),
@@ -993,7 +995,11 @@ class const AllOfGenerator({
               Code('final $fieldNameJson = '),
               toJsonBuilt.unsafeRawBody.code,
               const Code(';'),
-              const Code(r'_$map.addAll('),
+              refer(
+                'mergeJsonObject',
+                'package:tonik_util/tonik_util.dart',
+              ).code,
+              const Code(r'(_$map, '),
               refer(fieldNameJson).code,
               const Code(');'),
             ]);
@@ -1014,7 +1020,11 @@ class const AllOfGenerator({
                 'got \${$fieldNameJson.runtimeType}',
               ).statement,
               const Code('}'),
-              const Code(r'_$map.addAll('),
+              refer(
+                'mergeJsonObject',
+                'package:tonik_util/tonik_util.dart',
+              ).code,
+              const Code(r'(_$map, '),
               refer(fieldNameJson).code,
               const Code(');'),
             ]);

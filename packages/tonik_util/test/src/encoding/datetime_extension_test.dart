@@ -31,6 +31,63 @@ void main() {
     });
 
     group('timezone handling', () {
+      test('preserves positive offset seconds and the instant', () {
+        final instant = DateTime.utc(1900, 1, 1, 11, 50, 39);
+        final dateTime = OffsetDateTime.from(
+          instant,
+          offset: const Duration(minutes: 9, seconds: 21),
+        );
+
+        final encoded = dateTime.toTimeZonedIso8601String();
+
+        expect(encoded, '1900-01-01T12:00:00+00:09:21');
+        expect(OffsetDateTime.parse(encoded).isAtSameMomentAs(instant), isTrue);
+      });
+
+      test(
+        'preserves negative offset seconds and fractional clock seconds',
+        () {
+          final instant = DateTime.utc(2024, 1, 1, 0, 0, 0, 123, 456);
+          final dateTime = OffsetDateTime.from(
+            instant,
+            offset: const Duration(seconds: -21),
+          );
+
+          final encoded = dateTime.toTimeZonedIso8601String();
+
+          expect(encoded, '2023-12-31T23:59:39.123456-00:00:21');
+          expect(
+            OffsetDateTime.parse(encoded).isAtSameMomentAs(instant),
+            isTrue,
+          );
+        },
+      );
+
+      test('preserves offset seconds at the upper offset boundary', () {
+        final instant = DateTime.utc(2024, 1, 1, 0, 0, 0, 123, 456);
+        final dateTime = OffsetDateTime.from(
+          instant,
+          offset: const Duration(hours: 23, minutes: 59, seconds: 59),
+        );
+
+        final encoded = dateTime.toTimeZonedIso8601String();
+
+        expect(encoded, '2024-01-01T23:59:59.123456+23:59:59');
+        expect(OffsetDateTime.parse(encoded).isAtSameMomentAs(instant), isTrue);
+      });
+
+      test('discards fractional offset seconds without rounding', () {
+        final dateTime = OffsetDateTime.from(
+          DateTime.utc(2024),
+          offset: const Duration(seconds: 21, milliseconds: 500),
+        );
+
+        expect(
+          dateTime.toTimeZonedIso8601String(),
+          '2024-01-01T00:00:21.500+00:00:21',
+        );
+      });
+
       test('pads an offset datetime year and permits decoding it again', () {
         final dateTime = OffsetDateTime.parse('0099-01-01T12:00:00+02:00');
 
@@ -41,9 +98,14 @@ void main() {
       });
 
       test('pads a local DateTime year and permits decoding it again', () {
-        final encoded = DateTime(500, 1, 1, 12).toTimeZonedIso8601String();
+        final dateTime = DateTime(500, 1, 1, 12);
+        final encoded = dateTime.toTimeZonedIso8601String();
 
         expect(encoded.startsWith('0500-01-01T12:00:00'), isTrue);
+        expect(
+          OffsetDateTime.parse(encoded).isAtSameMomentAs(dateTime),
+          isTrue,
+        );
         expect(encoded.decodeSimpleDateTime().year, 500);
       });
 

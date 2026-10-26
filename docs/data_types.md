@@ -68,6 +68,8 @@ Regular date-time fields expose Dart `DateTime` objects. Internally Tonik uses `
 | Local (no timezone) | `OffsetDateTime` (system timezone) | `2023-12-25T15:30:45` | OffsetDateTime with system timezone offset |
 | Timezone offset | `OffsetDateTime` (specified offset) | `2023-12-25T15:30:45+05:00` | OffsetDateTime with the specified offset |
 
+Offsets accept seconds in `±HH:MM:SS` or `±HHMMSS` form and emit `:SS` when nonzero, preserving the offset and local clock fields. Offset seconds extend beyond RFC 3339’s minute-only offsets. Fractional offset seconds are discarded without rounding; fractional clock seconds retain microsecond precision.
+
 Date-time schemas with `enum` generate string-backed Dart enums. Each declared string is a distinct member and serializes exactly as written in the schema, even when two strings represent the same instant. For example, `2026-09-06T12:00:00.1000+02:00` remains distinct from `2026-09-06T12:00:00.100+02:00`.
 
 Call `value.toDateTime()` when you need a `DateTime`. This uses the same offset-preserving parser as regular date-time fields, with Dart's normalization and microsecond precision; it leaves enum identity and serialization unchanged. Conversion throws `DecodingException` for literals the parser cannot handle, or `StateError` for a configured unknown fallback member. Unknown wire strings are rejected unless an enum fallback is configured.

@@ -751,14 +751,14 @@ void main() {
                 'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
               );
             }
-            _$map.addAll(_$$baseJson);
+            mergeJsonObject(_$map, _$$baseJson);
             final _$$mixinJson = this.$mixin.toJson();
             if (_$$mixinJson is! Map<String, Object?>) {
               throw EncodingException(
                 'Expected \$mixin.toJson() to return Map<String, Object?>, got ${_$$mixinJson.runtimeType}',
               );
             }
-            _$map.addAll(_$$mixinJson);
+            mergeJsonObject(_$map, _$$mixinJson);
             return _$map;
           }
         ''';
@@ -4106,7 +4106,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
         'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
       );
     }
-    _$map.addAll(_$$baseJson);
+    mergeJsonObject(_$map, _$$baseJson);
     const _$knownKeys = {r'id'};
     for (final _$k in this.additionalProperties.keys) {
       if (_$knownKeys.contains(_$k)) {
@@ -4310,7 +4310,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
         'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
       );
     }
-    _$map.addAll(_$$baseJson);
+    mergeJsonObject(_$map, _$$baseJson);
     const _$knownKeys = {r'id'};
     for (final _$k in this.additionalProperties.keys) {
       if (_$knownKeys.contains(_$k)) {
@@ -4559,7 +4559,7 @@ class Holder {
     final _$idOrUserJson = this.idOrUser.toJson();
     if (_$idOrUserJson is Map<String, Object?>) {
       _$hasMap = true;
-      _$map.addAll(_$idOrUserJson);
+      mergeJsonObject(_$map, _$idOrUserJson);
     } else {
       _$values.add(_$idOrUserJson);
     }
@@ -4621,7 +4621,7 @@ class Holder {
         'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
       );
     }
-    _$map.addAll(_$$baseJson);
+    mergeJsonObject(_$map, _$$baseJson);
     const _$knownKeys = {r'id'};
     for (final _$k in this.additionalProperties.keys) {
       if (_$knownKeys.contains(_$k)) {
@@ -5898,7 +5898,7 @@ Object? toJson() {
       'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
     );
   }
-  _$map.addAll(_$$baseJson);
+  mergeJsonObject(_$map, _$$baseJson);
   const _$knownKeys = {r'id'};
   for (final _$k in this.additionalProperties.keys) {
     if (_$knownKeys.contains(_$k)) {
@@ -6086,9 +6086,9 @@ factory ExtendedItem.fromJson(Object? json) {
                 'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
               );
             }
-            _$map.addAll(_$$baseJson);
+            mergeJsonObject(_$map, _$$baseJson);
             final _$mapJson = this.map;
-            _$map.addAll(_$mapJson);
+            mergeJsonObject(_$map, _$mapJson);
             return _$map;
           }
         ''';
@@ -6168,10 +6168,10 @@ factory ExtendedItem.fromJson(Object? json) {
                 'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
               );
             }
-            _$map.addAll(_$$baseJson);
+            mergeJsonObject(_$map, _$$baseJson);
             if (this.map != null) {
               final _$mapJson = this.map!;
-              _$map.addAll(_$mapJson);
+              mergeJsonObject(_$map, _$mapJson);
             }
             return _$map;
           }
@@ -6271,11 +6271,11 @@ factory ExtendedItem.fromJson(Object? json) {
     var _$hasMap = false;
             final _$mapJson = this.map;
             _$hasMap = true;
-    _$map.addAll(_$mapJson);
+    mergeJsonObject(_$map, _$mapJson);
             final _$statusJson = this.status.toJson();
             if (_$statusJson is Map<String, Object?>) {
       _$hasMap = true;
-      _$map.addAll(_$statusJson);
+      mergeJsonObject(_$map, _$statusJson);
     } else {
       _$values.add(_$statusJson);
     }

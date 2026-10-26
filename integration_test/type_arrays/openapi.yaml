@@ -203,6 +203,45 @@ paths:
 
 components:
   schemas:
+    NullableUnionProfile:
+      type: object
+      required: [externalId, referencedId]
+      properties:
+        externalId:
+          anyOf:
+            - type: [string, 'null']
+            - type: integer
+        referencedId:
+          $ref: '#/components/schemas/NullableIdentifier'
+
+    NullableIdentifier:
+      anyOf:
+        - $ref: '#/components/schemas/NullableIdentifierText'
+        - type: integer
+
+    NullableIdentifierText:
+      type: [string, 'null']
+
+    NullableWriteOnlyUnion:
+      type: object
+      required: [externalId]
+      properties:
+        externalId:
+          writeOnly: true
+          anyOf:
+            - type: [string, 'null']
+            - type: integer
+
+    NonnullableWriteOnlyUnion:
+      type: object
+      required: [externalId]
+      properties:
+        externalId:
+          writeOnly: true
+          anyOf:
+            - type: string
+            - type: integer
+
     # Simple type arrays (no null)
     StringOrNumber:
       type: [string, number]

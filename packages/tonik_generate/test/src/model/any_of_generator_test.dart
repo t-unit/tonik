@@ -3489,7 +3489,7 @@ Object? toJson() {
   if (_$mapValues.isNotEmpty) {
     final _$map = <String, Object?>{};
     for (final _$m in _$mapValues) {
-      _$map.addAll(_$m);
+      mergeJsonObject(_$map, _$m);
     }
     final _$discValue = _$discriminatorValue;
     if (_$discValue != null) {
@@ -4416,7 +4416,7 @@ Object? toJson() {
   if (_$mapValues.isNotEmpty) {
     final _$map = <String, Object?>{};
     for (final _$m in _$mapValues) {
-      _$map.addAll(_$m);
+      mergeJsonObject(_$map, _$m);
     }
     return _$map;
   }
@@ -4744,7 +4744,7 @@ Object? toJson() {
   if (_$mapValues.isNotEmpty) {
     final _$map = <String, Object?>{};
     for (final _$m in _$mapValues) {
-      _$map.addAll(_$m);
+      mergeJsonObject(_$map, _$m);
     }
     return _$map;
   }
@@ -4849,7 +4849,7 @@ Object? toJson() {
             if (_$mapValues.isNotEmpty) {
               final _$map = <String, Object?>{};
               for (final _$m in _$mapValues) {
-                _$map.addAll(_$m);
+                mergeJsonObject(_$map, _$m);
               }
               return _$map;
             }

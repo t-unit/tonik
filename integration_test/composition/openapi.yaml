@@ -1417,3 +1417,98 @@ components:
         - $ref: '#/components/schemas/AllOfUnionDisplayName'
       additionalProperties:
         type: string
+
+    ContactDetails:
+      type: object
+      required: [details]
+      properties:
+        details:
+          type: object
+          required: [givenName, familyName]
+          properties:
+            givenName:
+              type: string
+            familyName:
+              type: string
+            title:
+              type: string
+      anyOf:
+        - $ref: '#/components/schemas/GivenNameDetails'
+        - $ref: '#/components/schemas/FamilyNameDetails'
+
+    GivenNameDetails:
+      type: object
+      properties:
+        details:
+          type: object
+          properties:
+            givenName:
+              type: string
+
+    FamilyNameDetails:
+      type: object
+      properties:
+        details:
+          type: object
+          properties:
+            familyName:
+              type: string
+
+    AnyOfNestedDetails:
+      anyOf:
+        - $ref: '#/components/schemas/GivenNameDetails'
+        - $ref: '#/components/schemas/FamilyNameDetails'
+
+    AllOfNestedDetails:
+      allOf:
+        - $ref: '#/components/schemas/GivenNameDetails'
+        - $ref: '#/components/schemas/FamilyNameDetails'
+
+    NullableContactDetails:
+      type: [object, 'null']
+      properties:
+        name:
+          type: string
+      anyOf:
+        - type: 'null'
+        - type: object
+          properties:
+            email:
+              type: string
+
+    NullableContactDetailsHolder:
+      type: object
+      required: [named, inline]
+      properties:
+        named:
+          $ref: '#/components/schemas/NullableContactDetails'
+        inline:
+          type: [object, 'null']
+          properties:
+            name:
+              type: string
+          anyOf:
+            - type: 'null'
+            - type: object
+              properties:
+                email:
+                  type: string
+
+    SelfReferencedContact:
+      type: object
+      properties:
+        name:
+          type: string
+      anyOf:
+        - $ref: '#/components/schemas/SelfReferencedContact'
+        - type: object
+          properties:
+            email:
+              type: string
+
+    AllOfUnionNestedDetails:
+      allOf:
+        - oneOf:
+            - type: string
+            - $ref: '#/components/schemas/GivenNameDetails'
+        - $ref: '#/components/schemas/FamilyNameDetails'

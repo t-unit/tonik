@@ -152,6 +152,23 @@ class ModelImporter._(
       log.fine('Pass 2: Populating $name');
       _populateShell(name, schema, context);
     }
+
+    // Referenced members can be populated after the union that contains them.
+    for (final model in models.whereType<AnyOfModel>()) {
+      model.isNullable |= _hasNullableAnyOfMember(model, <Model>{});
+    }
+  }
+
+  bool _hasNullableAnyOfMember(Model model, Set<Model> visited) {
+    if (!visited.add(model)) return false;
+    if (model.isEffectivelyNullable) return true;
+    return switch (model) {
+      AliasModel(:final model) => _hasNullableAnyOfMember(model, visited),
+      AnyOfModel(:final models) => models.any(
+        (member) => _hasNullableAnyOfMember(member.model, visited),
+      ),
+      _ => false,
+    };
   }
 
   /// Creates an empty model shell for a named schema without resolving refs.
@@ -217,7 +234,7 @@ class ModelImporter._(
       return;
     }
 
-    if (schema.allOf != null) {
+    if (schema.allOf != null || _hasAnyOfObjectSiblings(schema)) {
       final modelContext = context.push(name);
       final allOfModel = AllOfModel(
         defaultValue: schema.rawDefault,
@@ -544,6 +561,17 @@ class ModelImporter._(
       return;
     }
 
+    if (_hasAnyOfObjectSiblings(schema)) {
+      _populateAnyOfObjectSiblings(
+        name,
+        schema,
+        context,
+        existingModel as AllOfModel,
+      );
+      applyExamples(existingModel, examples);
+      return;
+    }
+
     if (schema.allOf != null) {
       _populateAllOfShell(name, schema, context, existingModel as AllOfModel);
       applyExamples(existingModel, examples);
@@ -734,6 +762,40 @@ class ModelImporter._(
     return false;
   }
 
+  bool _hasAnyOfObjectSiblings(Schema schema) =>
+      schema.allOf == null &&
+      schema.oneOf == null &&
+      schema.anyOf != null &&
+      schema.nonNullTypes.singleOrNull == 'object' &&
+      schema.properties != null;
+
+  void _populateAnyOfObjectSiblings(
+    String? name,
+    Schema schema,
+    Context context,
+    AllOfModel shell,
+  ) {
+    final modelContext = context.push(name ?? 'allOf');
+    final siblings = _parseClassModel(
+      null,
+      schema,
+      modelContext,
+      cacheSchema: false,
+    );
+    final union = _parseAnyOf(
+      null,
+      schema,
+      modelContext,
+      cacheSchema: false,
+      enclosingModel: shell,
+    );
+    shell
+      ..models = [siblings, union]
+      ..isNullable =
+          siblings.isEffectivelyNullable && union.isEffectivelyNullable;
+    if (name != null) _populatedComposites.add(name);
+  }
+
   /// Populates an allOf shell's models.
   void _populateAllOfShell(
     String name,
@@ -837,6 +899,9 @@ class ModelImporter._(
       }
       final model = _resolveCompositeSubModel(anyOfSchema, modelContext, shell);
       if (model != null) {
+        shell.isNullable |=
+            (anyOfSchema.isNullable ?? anyOfSchema.hasNullType) ||
+            model.isEffectivelyNullable;
         resolvedModels.add((
           discriminatorValue: _getDiscriminatorValue(
             discriminator: effectiveDiscriminator,
@@ -1022,8 +1087,7 @@ class ModelImporter._(
       final isNullable =
           propertySchema.isNullable ?? propertySchema.hasNullType;
       final isDeprecated = propertySchema.isDeprecated ?? false;
-      final isReadOnly = propertySchema.isReadOnly ?? false;
-      final isWriteOnly = propertySchema.isWriteOnly ?? false;
+      final (:isReadOnly, :isWriteOnly) = _propertyAccessFlags(propertySchema);
       final description = propertySchema.description;
       final nameOverride = propertySchema.xDartName;
 
@@ -1092,6 +1156,25 @@ class ModelImporter._(
     }
 
     return model;
+  }
+
+  ({bool isReadOnly, bool isWriteOnly}) _propertyAccessFlags(Schema schema) {
+    var current = schema;
+    var isReadOnly = false;
+    var isWriteOnly = false;
+    final visited = <String>{};
+
+    while (true) {
+      isReadOnly = isReadOnly || (current.isReadOnly ?? false);
+      isWriteOnly = isWriteOnly || (current.isWriteOnly ?? false);
+      final ref = current.ref;
+      if (ref == null || !visited.add(ref)) break;
+      final resolved = resolveSchemaReference(current);
+      if (resolved == null) break;
+      current = resolved;
+    }
+
+    return (isReadOnly: isReadOnly, isWriteOnly: isWriteOnly);
   }
 
   Model importPropertySchema(Schema schema, Context context) {
@@ -1450,7 +1533,7 @@ class ModelImporter._(
       return _annotateSchemaValue(name, model, schema, context);
     }
 
-    if (schema.allOf != null) {
+    if (schema.allOf != null || _hasAnyOfObjectSiblings(schema)) {
       return _parseAllOf(name, schema, context);
     }
 
@@ -1706,6 +1789,11 @@ class ModelImporter._(
       _registerModel(allOfModel, schema);
     }
 
+    if (_hasAnyOfObjectSiblings(schema)) {
+      _populateAnyOfObjectSiblings(name, schema, context, allOfModel);
+      return allOfModel;
+    }
+
     allOfModel.additionalPropertiesPolicy = importAdditionalProperties(
       schema,
       modelContext,
@@ -1812,6 +1900,7 @@ class ModelImporter._(
     Schema schema,
     Context context, {
     bool cacheSchema = true,
+    Model? enclosingModel,
   }) {
     final modelContext = context.push(name ?? 'anyOf');
     final alternatives = schema.anyOf!;
@@ -1851,9 +1940,12 @@ class ModelImporter._(
       final member = _resolveCompositeSubModel(
         anyOfSchema,
         modelContext,
-        anyOfModel,
+        enclosingModel ?? anyOfModel,
       );
       if (member != null) {
+        anyOfModel.isNullable |=
+            (anyOfSchema.isNullable ?? anyOfSchema.hasNullType) ||
+            member.isEffectivelyNullable;
         resolvedModels.add((
           discriminatorValue: _getDiscriminatorValue(
             discriminator: effectiveDiscriminator,
@@ -2124,8 +2216,7 @@ class ModelImporter._(
       final isNullable =
           propertySchema.isNullable ?? propertySchema.hasNullType;
       final isDeprecated = propertySchema.isDeprecated ?? false;
-      final isReadOnly = propertySchema.isReadOnly ?? false;
-      final isWriteOnly = propertySchema.isWriteOnly ?? false;
+      final (:isReadOnly, :isWriteOnly) = _propertyAccessFlags(propertySchema);
       final description = propertySchema.description;
       final nameOverride = propertySchema.xDartName;
 

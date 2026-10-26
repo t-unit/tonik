@@ -77,6 +77,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
 
+  /profiles:
+    post:
+      operationId: createProfile
+      tags:
+        - read-write-only
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+      responses:
+        '200':
+          description: Profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+
   /credentials:
     post:
       operationId: createCredentials
@@ -275,6 +294,28 @@ components:
           type: string
           readOnly: true
           description: Server-generated creation timestamp.
+
+    Profile:
+      type: object
+      required: [name]
+      properties:
+        id:
+          $ref: '#/components/schemas/ServerId'
+        name:
+          type: string
+        password:
+          $ref: '#/components/schemas/PasswordAlias'
+
+    ServerId:
+      type: integer
+      readOnly: true
+
+    PasswordAlias:
+      $ref: '#/components/schemas/Password'
+
+    Password:
+      type: string
+      writeOnly: true
 
     Credentials:
       type: object
