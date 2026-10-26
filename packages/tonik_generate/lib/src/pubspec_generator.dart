@@ -52,7 +52,7 @@ void generatePubspec({
           dependency.name: dependency.versionConstraint,
         if (useImmutableCollections) 'fast_immutable_collections': '^11.2.0',
         'meta': '^1.19.0',
-        'tonik_util': '^0.10.0',
+        'tonik_util': '^0.11.0',
       },
       'dev_dependencies': {'lints': '^6.1.0'},
     });

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
@@ -79,7 +80,19 @@ void main() {
   });
 
   group('generatePubspec', () {
+    late String runtimeConstraint;
     late Directory tempDir;
+
+    setUpAll(() async {
+      final runtimeLibrary = await Isolate.resolvePackageUri(
+        Uri.parse('package:tonik_util/tonik_util.dart'),
+      );
+      final runtimePubspec = loadYaml(
+        File.fromUri(runtimeLibrary!.resolve('../pubspec.yaml'))
+            .readAsStringSync(),
+      ) as YamlMap;
+      runtimeConstraint = '^${runtimePubspec['version']}';
+    });
 
     setUp(() {
       tempDir = Directory.systemTemp.createTempSync();
@@ -131,7 +144,7 @@ void main() {
           'collection': '^1.19.1',
           'dio': '^5.11.1',
           'meta': '^1.19.0',
-          'tonik_util': '^0.10.0',
+          'tonik_util': runtimeConstraint,
         },
         'dev_dependencies': {'lints': '^6.1.0'},
       });
@@ -294,14 +307,14 @@ void main() {
         'collection': '^1.19.1',
         'dio': '^5.11.1',
         'meta': '^1.19.0',
-        'tonik_util': '^0.10.0',
+        'tonik_util': runtimeConstraint,
       });
       expect(httpPubspec['dependencies'], {
         'big_decimal': '^0.7.0',
         'collection': '^1.19.1',
         'http': '^1.6.0',
         'meta': '^1.19.0',
-        'tonik_util': '^0.10.0',
+        'tonik_util': runtimeConstraint,
       });
     });
 
