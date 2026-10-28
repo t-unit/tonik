@@ -6,7 +6,7 @@ From the repository root ([setup](../README.md#run)):
 ./examples/run.sh javascript_fastify
 ```
 
-[server.js](server/server.js) uses Fastify 5.12.3 and Swagger 9.8.1 in dynamic mode
+[server.js](server/server.js) uses Fastify 5.12.7 and Swagger 9.9.2 in dynamic mode
 to produce OpenAPI 3.0 from the route schemas. Dependencies are pinned in
 [package.json](server/package.json) and its lockfile.
 

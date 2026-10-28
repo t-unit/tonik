@@ -50,7 +50,7 @@ void generatePubspec({
         'collection': '^1.19.1',
         for (final dependency in backendGenerator.dependencies)
           dependency.name: dependency.versionConstraint,
-        if (useImmutableCollections) 'fast_immutable_collections': '^11.2.0',
+        if (useImmutableCollections) 'fast_immutable_collections': '^12.0.0',
         'meta': '^1.19.0',
         'tonik_util': '^0.11.1',
       },

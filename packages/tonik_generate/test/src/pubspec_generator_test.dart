@@ -207,7 +207,7 @@ void main() {
 
       final pubspec = loadYaml(content) as YamlMap;
       final dependencies = pubspec['dependencies'] as YamlMap;
-      expect(dependencies['fast_immutable_collections'], '^11.2.0');
+      expect(dependencies['fast_immutable_collections'], '^12.0.0');
     });
 
     test('does not include fast_immutable_collections when disabled', () {
