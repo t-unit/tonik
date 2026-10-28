@@ -11,7 +11,7 @@ dependencies:
   tonik_util:
     path: ../../../packages/tonik_util
 dev_dependencies:
-  test: 1.32.0
+  test: 1.33.0
 dependency_overrides:
   tonik_util:
     path: ../../../packages/tonik_util

@@ -7,7 +7,7 @@ From the repository root ([setup](../README.md#run)):
 ```
 
 The [Rails app](server/config/application.rb) runs without a database. Rails
-8.1.3.1, rswag 2.17.0 and Ruby 4.0.6 are pinned in the [Gemfile](server/Gemfile),
+8.1.4, rswag 2.17.0 and Ruby 4.0.9 are pinned in the [Gemfile](server/Gemfile),
 lockfile and Dockerfile.
 
 rswag generates OpenAPI 3.0 from [request specs](server/spec/requests/catalog_spec.rb).

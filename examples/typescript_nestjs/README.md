@@ -6,7 +6,7 @@ From the repository root ([setup](../README.md#run)):
 ./examples/run.sh typescript_nestjs
 ```
 
-[main.ts](server/main.ts) uses NestJS 12.0.1 and Swagger 12.0.1 to produce
+[main.ts](server/main.ts) uses NestJS 12.3.2 and Swagger 12.0.5 to produce
 OpenAPI 3.0 from DTO and controller decorators. Dependencies are pinned in
 [package.json](server/package.json) and its lockfile; no Swagger compiler plugin
 is needed.

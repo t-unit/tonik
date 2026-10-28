@@ -6,7 +6,7 @@ From the repository root ([setup](../README.md#run)):
 ./examples/run.sh python_fastapi
 ```
 
-[app.py](server/app.py) uses FastAPI 0.141.1 and Pydantic 2.13.5 to produce
+[app.py](server/app.py) uses FastAPI 0.162.0 and Pydantic 2.14.1 to produce
 OpenAPI 3.1 from Python models and route declarations. Runtime dependencies are
 pinned in [requirements.txt](server/requirements.txt).
 
