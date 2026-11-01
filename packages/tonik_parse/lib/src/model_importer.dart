@@ -52,6 +52,7 @@ class ModelImporter._(
   /// sub-models have already been filled in (and thus can be checked for
   /// back-edges).
   final Set<String> _populatedComposites = {};
+  final _unpopulatedAliases = Set<AliasModel>.identity();
 
   late Set<Model> models;
 
@@ -132,6 +133,7 @@ class ModelImporter._(
     _propertyModels.clear();
     _additionalProperties.clear();
     _populatedComposites.clear();
+    _unpopulatedAliases.clear();
     _schemaReferences.clear();
     _schemaAliases.clear();
     _nestedReferenceSchemas.clear();
@@ -153,6 +155,10 @@ class ModelImporter._(
       _populateShell(name, schema, context);
     }
 
+    resolveAnyOfNullability();
+  }
+
+  void resolveAnyOfNullability() {
     // Referenced members can be populated after the union that contains them.
     for (final model in models.whereType<AnyOfModel>()) {
       model.isNullable |= _hasNullableAnyOfMember(model, <Model>{});
@@ -161,7 +167,12 @@ class ModelImporter._(
 
   bool _hasNullableAnyOfMember(Model model, Set<Model> visited) {
     if (!visited.add(model)) return false;
-    if (model.isEffectivelyNullable) return true;
+    if (model is AnyModel || model.isEffectivelyNullable) return true;
+    // Alias shells temporarily use AnyModel until their targets are populated.
+    if (_unpopulatedAliases.contains(model) ||
+        _placeholders.containsValue(model)) {
+      return false;
+    }
     return switch (model) {
       AliasModel(:final model) => _hasNullableAnyOfMember(model, visited),
       AnyOfModel(:final models) => models.any(
@@ -205,6 +216,7 @@ class ModelImporter._(
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
       );
+      _unpopulatedAliases.add(aliasModel);
       _logModelAdded(aliasModel);
       _registerModel(aliasModel, schema);
       return;
@@ -549,6 +561,7 @@ class ModelImporter._(
 
     if (schema.ref != null) {
       _populateAliasShell(name, schema, context, existingModel as AliasModel);
+      _unpopulatedAliases.remove(existingModel);
       applyExamples(existingModel, examples);
       return;
     }
@@ -901,7 +914,7 @@ class ModelImporter._(
       if (model != null) {
         shell.isNullable |=
             (anyOfSchema.isNullable ?? anyOfSchema.hasNullType) ||
-            model.isEffectivelyNullable;
+            _hasNullableAnyOfMember(model, <Model>{});
         resolvedModels.add((
           discriminatorValue: _getDiscriminatorValue(
             discriminator: effectiveDiscriminator,
@@ -1945,7 +1958,7 @@ class ModelImporter._(
       if (member != null) {
         anyOfModel.isNullable |=
             (anyOfSchema.isNullable ?? anyOfSchema.hasNullType) ||
-            member.isEffectivelyNullable;
+            _hasNullableAnyOfMember(member, <Model>{});
         resolvedModels.add((
           discriminatorValue: _getDiscriminatorValue(
             discriminator: effectiveDiscriminator,

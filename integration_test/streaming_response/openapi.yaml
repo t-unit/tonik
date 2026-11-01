@@ -336,6 +336,28 @@ paths:
           content:
             application/x-ndjson:
               itemSchema: false
+  /any-of-items:
+    get:
+      operationId: getAnyOfItems
+      tags: [streaming]
+      responses:
+        '200':
+          description: Items with an unconstrained alternative
+          content:
+            application/x-ndjson:
+              itemSchema:
+                $ref: '#/components/schemas/AnyOfItem'
+  /nonnullable-any-of-items:
+    get:
+      operationId: getNonnullableAnyOfItems
+      tags: [streaming]
+      responses:
+        '200':
+          description: Integer or string items
+          content:
+            application/x-ndjson:
+              itemSchema:
+                $ref: '#/components/schemas/NonnullableAnyOfItem'
   /nested-items:
     get:
       operationId: getNestedItems
@@ -421,6 +443,14 @@ components:
       $ref: '#/components/mediaTypes/Absent'
       description: 42
   schemas:
+    AnyOfItem:
+      anyOf:
+        - true
+        - type: integer
+    NonnullableAnyOfItem:
+      anyOf:
+        - type: string
+        - type: integer
     SseData:
       type: object
       required: [data]

@@ -10,6 +10,46 @@ import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
+  test('an unconstrained anyOf branch accepts null stream items', () async {
+    final probe = BackendProbe();
+    final server = CustomServer(
+      baseUrl: 'http://example.test',
+      serverConfig: probe.config(),
+    );
+    addTearDown(server.close);
+
+    final result = await StreamingApi(server).getAnyOfItems();
+    final Stream<TonikResult<AnyOfItem, Object>> stream = requireSuccess(result)
+        .value;
+    final items = stream.toList();
+    probe.bytes.add(utf8.encode('null\n7\n'));
+    await probe.bytes.close();
+
+    final values = await items;
+    expect(values, hasLength(2));
+    expect(requireSuccess(values.first).value, isNull);
+    expect(requireSuccess(values.last).value?.int, 7);
+  });
+
+  test('a nonnullable anyOf rejects null and decodes the next item', () async {
+    final probe = BackendProbe();
+    final server = CustomServer(
+      baseUrl: 'http://example.test',
+      serverConfig: probe.config(),
+    );
+    addTearDown(server.close);
+
+    final result = await StreamingApi(server).getNonnullableAnyOfItems();
+    final items = requireSuccess(result).value.toList();
+    probe.bytes.add(utf8.encode('null\n7\n'));
+    await probe.bytes.close();
+
+    final values = await items;
+    expect(values, hasLength(2));
+    expect(requireError(values.first).type, TonikErrorType.decoding);
+    expect(requireSuccess(values.last).value.int, 7);
+  });
+
   test(
     'borrowed client keeps its base URL during a generated request',
     () async {
