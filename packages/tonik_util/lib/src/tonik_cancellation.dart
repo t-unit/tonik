@@ -1,6 +1,10 @@
 import 'dart:async';
 
 /// A backend-neutral signal used to cancel an API operation.
+///
+/// Create a separate instance for each operation; do not reuse it or share it
+/// across operations. Tonik can cancel the signal during response cleanup,
+/// including after a successful response with no body.
 final class TonikCancellation._(
   final Completer<void> _completer,
   var Object? _reason,
