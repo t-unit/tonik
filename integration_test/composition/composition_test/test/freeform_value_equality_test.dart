@@ -95,8 +95,8 @@ void main() {
     final secondJson = <String, Object?>{
       'items': [1, 2],
     };
-    final first = AnyOfFreeformValue.fromJson(firstJson);
-    final second = AnyOfFreeformValue.fromJson(secondJson);
+    final first = $RawAnyOfFreeformValue.fromJson(firstJson);
+    final second = $RawAnyOfFreeformValue.fromJson(secondJson);
 
     expect(identical(firstJson, secondJson), isFalse);
     expect(first.toJson(), {

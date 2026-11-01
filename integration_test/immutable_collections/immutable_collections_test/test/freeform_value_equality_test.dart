@@ -54,8 +54,8 @@ void main() {
       1,
       {'name': 'same'},
     ];
-    final first = AnyOfFreeformValue.fromJson(firstJson);
-    final second = AnyOfFreeformValue.fromJson(secondJson);
+    final first = $RawAnyOfFreeformValue.fromJson(firstJson);
+    final second = $RawAnyOfFreeformValue.fromJson(secondJson);
 
     expect(identical(firstJson, secondJson), isFalse);
     expect(first.toJson(), [

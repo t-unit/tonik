@@ -83,6 +83,7 @@ class Importer({
     requestBodyImporter.import();
     securitySchemeImporter.import();
     operationImporter.import();
+    modelImporter.resolveAnyOfNullability();
 
     return core.ApiDocument(
       title: openApiObject.info.title,

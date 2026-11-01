@@ -6484,7 +6484,7 @@ void main() {
 
   group('AnyOfBooleanSchema', () {
     group('AnyModel variant (from boolean true schema)', () {
-      late AnyOfBooleanSchema anyVariant;
+      late $RawAnyOfBooleanSchema anyVariant;
 
       setUp(() {
         anyVariant = const AnyOfBooleanSchema(object: 'hello');
@@ -6520,13 +6520,13 @@ void main() {
       });
 
       test('fromJson with non-Class1 value falls through to AnyModel', () {
-        final result = AnyOfBooleanSchema.fromJson(42);
+        final result = $RawAnyOfBooleanSchema.fromJson(42);
         expect(result.class1, isNull);
         expect(result.object, 42);
       });
 
       test('fromJson with Class1-shaped value populates class1 only', () {
-        final result = AnyOfBooleanSchema.fromJson(const <String, Object?>{
+        final result = $RawAnyOfBooleanSchema.fromJson(const <String, Object?>{
           'name': 'test',
         });
         expect(result.class1, const Class1(name: 'test'));
@@ -6535,7 +6535,7 @@ void main() {
 
       test('fromJson(null) throws JsonDecodingException', () {
         expect(
-          () => AnyOfBooleanSchema.fromJson(null),
+          () => $RawAnyOfBooleanSchema.fromJson(null),
           throwsA(isA<JsonDecodingException>()),
         );
       });
@@ -6543,7 +6543,7 @@ void main() {
       test('fromJson roundtrip with raw string value', () {
         const original = AnyOfBooleanSchema(object: 'raw string');
         final json = original.toJson();
-        final reconstructed = AnyOfBooleanSchema.fromJson(json);
+        final reconstructed = $RawAnyOfBooleanSchema.fromJson(json);
         expect(reconstructed.class1, isNull);
         expect(reconstructed.object, 'raw string');
       });
@@ -6616,7 +6616,7 @@ void main() {
     });
 
     group('Class1 variant', () {
-      late AnyOfBooleanSchema classVariant;
+      late $RawAnyOfBooleanSchema classVariant;
 
       setUp(() {
         classVariant = const AnyOfBooleanSchema(class1: Class1(name: 'test'));
@@ -6628,7 +6628,7 @@ void main() {
 
       test('json roundtrip', () {
         final json = classVariant.toJson();
-        final reconstructed = AnyOfBooleanSchema.fromJson(json);
+        final reconstructed = $RawAnyOfBooleanSchema.fromJson(json);
         expect(reconstructed, classVariant);
       });
 
