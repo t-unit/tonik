@@ -165,7 +165,10 @@ Error types on `TonikError`: `encoding`, `decoding`, `network`, `cancelled`, `ot
 
 Every generated API method accepts an optional backend-neutral
 `TonikCancellation`, letting you cancel in-flight requests without exposing
-the selected HTTP client:
+the selected HTTP client. Create a fresh token for each operation; tokens must
+not be reused or shared across operations. Tonik can cancel a token during
+[response cleanup](http_backends.md#portable-api), even when the operation
+succeeds.
 
 ```dart
 final cancellation = TonikCancellation();

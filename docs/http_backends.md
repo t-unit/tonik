@@ -42,6 +42,12 @@ try {
 Code that only uses this surface can switch backends without changing its API
 calls or result handling.
 
+Each `TonikCancellation` belongs to one operation. Create a fresh instance for
+each call; do not reuse it for later calls or share it across concurrent calls.
+Tonik can cancel the signal to release response resources, including after a
+successful response with no body. The signal's state is not an indication that
+the operation failed; use the returned `TonikResult` to determine its outcome.
+
 ## Client Configuration and Ownership
 
 Generated servers accept the shared `ServerConfig<Client>` type:
@@ -140,7 +146,9 @@ Then update affected call sites:
    );
    ```
 
-   `cancellation.cancel()` still cancels the request.
+   `cancellation.cancel()` cancels the request. Create a separate
+   `TonikCancellation` for each operation; sharing a Dio `CancelToken` across
+   requests does not translate to sharing a `TonikCancellation`.
 
 3. Call operations through generated API clients. Replace direct construction
    of classes such as `GetPetById` with `PetApi(server).getPetById(...)`.
