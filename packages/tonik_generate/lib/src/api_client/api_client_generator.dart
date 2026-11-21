@@ -234,8 +234,33 @@ class ApiClientGenerator({
     final sortedResponses = operation.responses.entries.toList()
       ..sort(_compareResponses);
     for (final entry in sortedResponses) {
-      final resolved = entry.value.resolved;
-      for (final body in resolved.bodies) {
+      var response = entry.value;
+      var summary = response.summary;
+      var description = response.description;
+      while (response is ResponseAlias) {
+        response = response.response;
+        summary ??= response.summary;
+        description ??= response.description;
+      }
+
+      final summaryDocs = (summary?.trim().isNotEmpty ?? false)
+          ? formatDocComment(summary)
+          : const <String>[];
+      final descriptionDocs = (description?.trim().isNotEmpty ?? false)
+          ? formatDocComment(description)
+          : const <String>[];
+      if (summaryDocs.isNotEmpty || descriptionDocs.isNotEmpty) {
+        docs.addAll([
+          if (docs.isNotEmpty) '///',
+          '/// **Response ${_formatStatus(entry.key)}**',
+          '///',
+          ...summaryDocs,
+          if (summaryDocs.isNotEmpty && descriptionDocs.isNotEmpty) '///',
+          ...descriptionDocs,
+        ]);
+      }
+
+      for (final body in response.resolved.bodies) {
         final exampleDocs = formatExamplesAsDocs(body.examples);
         if (exampleDocs.isEmpty) continue;
         docs

@@ -207,7 +207,7 @@ by the generated server.
 |---------|--------|-------|
 | OpenAPI 3.0.x | ✅ Fully Supported | |
 | OpenAPI 3.1.x | ✅ Supported | Supports the features listed below; not all JSON Schema keywords are implemented |
-| OpenAPI 3.2.x | Partially supported | Streaming responses, reusable media types, and inline `dataValue` examples; see below |
+| OpenAPI 3.2.x | Partially supported | See supported features below |
 | OpenAPI 2.0 (Swagger) | ❌ Not Supported | Use a converter like swagger2openapi |
 
 Tonik does not validate whether an implemented feature is allowed by the declared OpenAPI version. For example, typed `itemSchema` response streams also work in 3.0 and 3.1 documents. Version reporting recognizes 3.0, 3.1, and 3.2; unknown versions log a warning and parsing continues permissively. Version switches select between conflicting OAS serialization rules, such as multipart style handling in 3.0 versus 3.1 and 3.2.
@@ -223,6 +223,7 @@ Tonik does not validate whether an implemented feature is allowed by the declare
 
 ### Supported OAS 3.2 Features
 
+- Response Object `summary` and optional `description`, rendered by HTTP status in generated client method docs.
 - Typed NDJSON, JSONL, JSON-seq, and SSE response streams with an explicit, usable `itemSchema`; see [Streaming Responses](streaming_responses.md) for framing and backend limitations.
 - Reusable Media Type Objects referenced within `#/components/mediaTypes`. External targets and other same-document media targets are unsupported.
 - Inline Example Object `dataValue` rendered in generated documentation.

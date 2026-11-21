@@ -132,6 +132,12 @@ jobs:
         run: tar -xzf generated-integration-code.tar.gz
         shell: bash
 
+      - name: Set up Java for Imposter
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+
       - name: Download Imposter JAR (${{ matrix.backend }})
         run: bash ./scripts/setup_imposter.sh
         shell: bash

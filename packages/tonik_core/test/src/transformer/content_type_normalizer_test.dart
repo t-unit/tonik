@@ -1221,6 +1221,7 @@ void main() {
           final innerResponse = ResponseObject(
             name: 'InnerResponse',
             context: context.pushAll(['responses', 'InnerResponse']),
+            summary: 'Original summary',
             description: '',
             headers: const {},
             bodies: {
@@ -1238,6 +1239,7 @@ void main() {
           final alias = ResponseAlias(
             name: 'AliasName',
             context: aliasContext,
+            summary: 'Alias summary',
             description: 'my alias desc',
             response: innerResponse,
           );
@@ -1270,9 +1272,11 @@ void main() {
 
           expect(transformedAlias.name, 'AliasName');
           expect(transformedAlias.context, aliasContext);
+          expect(transformedAlias.summary, 'Alias summary');
           expect(transformedAlias.description, 'my alias desc');
 
           final normalizedInner = transformedAlias.response as ResponseObject;
+          expect(normalizedInner.summary, 'Original summary');
           expect(normalizedInner.bodies.first.model, isA<BinaryModel>());
         },
       );

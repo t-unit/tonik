@@ -3,12 +3,14 @@ import 'package:tonik_parse/src/model/media_type.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 
 class Response({
-  required final String description,
   required final Map<String, ReferenceWrapper<Header>>? headers,
   required final Map<String, ReferenceWrapper<MediaType>>? content,
+  final String? summary,
+  final String? description,
 }) {
   factory fromJson(Map<String, dynamic> json) => Response(
-    description: json['description'] as String,
+    summary: json['summary'] as String?,
+    description: json['description'] as String?,
     headers: (json['headers'] as Map<String, dynamic>?)?.map(
       (k, e) => MapEntry(k, ReferenceWrapper<Header>.fromJson(e)),
     ),
@@ -21,6 +23,6 @@ class Response({
 
   @override
   String toString() =>
-      'Response{description: $description, headers: $headers, '
-      'content: $content}';
+      'Response{summary: $summary, description: $description, '
+      'headers: $headers, content: $content}';
 }

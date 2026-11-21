@@ -1,7 +1,6 @@
 # Roadmap
 
 - Proper OpenAPI 3.2 support
-  - Optional Response Object `description` and support for `summary`
   - Sequential media beyond [typed NDJSON, JSONL, JSON-seq, and SSE responses](streaming_responses.md): non-streaming array decoding without `itemSchema` using normal `schema` handling, and streamed requests and multipart streams
   - Parameter and header encoding/decoding via `content` for supported media types
   - `in: "querystring"` parameter location (entire query string as single parameter)
