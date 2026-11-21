@@ -293,6 +293,97 @@ components:
         - $ref: '#/components/schemas/Class1'
         - $ref: '#/components/schemas/Class2'
 
+    Base:
+      type: object
+      required: [id]
+      properties:
+        id:
+          type: integer
+
+    Labeled:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Base'
+      required: [label]
+      properties:
+        label:
+          type: string
+
+    NullableLabeled:
+      type: [object, 'null']
+      allOf: [true]
+      required: [label]
+      properties:
+        label:
+          type: string
+
+    NullableBase:
+      type: [object, 'null']
+      required: [id]
+      properties:
+        id:
+          type: integer
+
+    NullableExtendedLabeled:
+      type: [object, 'null']
+      allOf:
+        - $ref: '#/components/schemas/NullableBase'
+      required: [label]
+      properties:
+        label:
+          type: string
+
+    NullableNestedLabeled:
+      type: [object, 'null']
+      allOf:
+        - allOf: [true]
+      required: [label]
+      properties:
+        label:
+          type: string
+
+    NullableLabeledHolder:
+      type: object
+      required: [unconstrained, extended, nested]
+      properties:
+        unconstrained:
+          $ref: '#/components/schemas/NullableLabeled'
+        extended:
+          $ref: '#/components/schemas/NullableExtendedLabeled'
+        nested:
+          $ref: '#/components/schemas/NullableNestedLabeled'
+
+    ContactWithKind:
+      type: object
+      required: [kind]
+      properties:
+        kind:
+          type: string
+          enum: [e-mail, phone]
+      discriminator:
+        propertyName: kind
+        mapping:
+          email: '#/components/schemas/EmailContact'
+          e-mail: '#/components/schemas/EmailContact'
+          phone: '#/components/schemas/PhoneContact'
+      oneOf:
+        - $ref: '#/components/schemas/EmailContact'
+        - $ref: '#/components/schemas/PhoneContact'
+
+    EmailContact:
+      type: object
+      required: [address]
+      properties:
+        address:
+          type: string
+
+    PhoneContact:
+      type: object
+      required: [number]
+      properties:
+        number:
+          type: string
+
     AllOfEnum: 
       allOf:
         - type: object

@@ -246,7 +246,7 @@ class ModelImporter._(
       return;
     }
 
-    if (schema.allOf != null || _hasAnyOfObjectSiblings(schema)) {
+    if (schema.allOf != null || _hasObjectUnionSiblings(schema)) {
       final modelContext = context.push(name);
       final allOfModel = AllOfModel(
         defaultValue: schema.rawDefault,
@@ -574,19 +574,8 @@ class ModelImporter._(
       return;
     }
 
-    if (_hasAnyOfObjectSiblings(schema)) {
-      _populateAnyOfObjectSiblings(
-        name,
-        schema,
-        context,
-        existingModel as AllOfModel,
-      );
-      applyExamples(existingModel, examples);
-      return;
-    }
-
-    if (schema.allOf != null) {
-      _populateAllOfShell(name, schema, context, existingModel as AllOfModel);
+    if (schema.allOf != null || _hasObjectUnionSiblings(schema)) {
+      _populateAllOfShell(schema, existingModel as AllOfModel);
       applyExamples(existingModel, examples);
       return;
     }
@@ -775,64 +764,155 @@ class ModelImporter._(
     return false;
   }
 
-  bool _hasAnyOfObjectSiblings(Schema schema) =>
+  bool _hasObjectUnionSiblings(Schema schema) =>
       schema.allOf == null &&
-      schema.oneOf == null &&
-      schema.anyOf != null &&
       schema.nonNullTypes.singleOrNull == 'object' &&
-      schema.properties != null;
+      (schema.oneOf != null
+          ? (schema.properties?.isNotEmpty ?? false)
+          : schema.anyOf != null && schema.properties != null);
 
-  void _populateAnyOfObjectSiblings(
-    String? name,
-    Schema schema,
-    Context context,
-    AllOfModel shell,
-  ) {
-    final modelContext = context.push(name ?? 'allOf');
+  void _populateObjectUnionSiblings(Schema schema, AllOfModel shell) {
+    final modelContext = shell.context;
+    final hasOneOf = schema.oneOf != null;
     final siblings = _parseClassModel(
       null,
       schema,
-      modelContext,
+      // A child context sorts after the union when merging encoded fields.
+      hasOneOf ? modelContext.push('properties') : modelContext,
       cacheSchema: false,
     );
-    final union = _parseAnyOf(
-      null,
-      schema,
-      modelContext,
-      cacheSchema: false,
-      enclosingModel: shell,
-    );
+    final union = hasOneOf
+        ? _parseOneOf(
+            null,
+            schema,
+            modelContext,
+            cacheSchema: false,
+            enclosingModel: shell,
+          )
+        : _parseAnyOf(
+            null,
+            schema,
+            modelContext,
+            cacheSchema: false,
+            enclosingModel: shell,
+          );
     shell
-      ..models = [siblings, union]
+      ..models = hasOneOf ? [union, siblings] : [siblings, union]
       ..isNullable =
           siblings.isEffectivelyNullable && union.isEffectivelyNullable;
-    if (name != null) _populatedComposites.add(name);
   }
 
   /// Populates an allOf shell's models.
-  void _populateAllOfShell(
-    String name,
-    Schema schema,
-    Context context,
-    AllOfModel shell,
-  ) {
-    final modelContext = context.push(name);
+  void _populateAllOfShell(Schema schema, AllOfModel shell) {
+    final alternatives = schema.allOf;
+    if (alternatives == null) {
+      _populateObjectUnionSiblings(schema, shell);
+    } else {
+      _populateAllOfMembers(schema, shell, alternatives);
+    }
+    if (shell.name case final name?) _populatedComposites.add(name);
+  }
 
+  void _populateAllOfMembers(
+    Schema schema,
+    AllOfModel shell,
+    List<Schema> alternatives,
+  ) {
+    final modelContext = shell.context;
     shell.additionalPropertiesPolicy = importAdditionalProperties(
       schema,
       modelContext,
     );
 
     final resolvedModels = <Model>[];
-    for (final allOfSchema in schema.allOf!) {
+    for (final allOfSchema in alternatives) {
       final model = _resolveCompositeSubModel(allOfSchema, modelContext, shell);
       if (model != null) {
         resolvedModels.add(model);
       }
     }
-    shell.models = resolvedModels;
 
-    _populatedComposites.add(name);
+    if ((schema.properties?.isNotEmpty ?? false) &&
+        (schema.nonNullTypes.singleOrNull == 'object' ||
+            (schema.type.isEmpty && _requiresObject(schema, <Schema>{})))) {
+      final siblings = ClassModel(
+        name: null,
+        properties: _importProperties(null, schema, modelContext),
+        context: modelContext,
+        description: null,
+        isDeprecated: false,
+        isNullable: schema.isNullable ?? schema.hasNullType,
+        isReadOnly: false,
+        isWriteOnly: false,
+        examples: const [],
+        nameOverride: null,
+        additionalPropertiesPolicy: null,
+      );
+      _addModelToSet(siblings);
+      resolvedModels.add(siblings);
+      if (schema.isNullable == null && siblings.isNullable) {
+        shell.isNullable = _schemaAllowsNull(schema, <Schema>{}) == true;
+      }
+    }
+    shell.models = resolvedModels;
+  }
+
+  bool _requiresObject(Schema schema, Set<Schema> visited) {
+    if (!visited.add(_canonicalSchema(schema))) return false;
+    if (schema.type case ['object'] when schema.isNullable != true) return true;
+
+    if (schema.ref != null) {
+      final target = resolveSchemaReference(schema);
+      if (target != null && _requiresObject(target, visited)) return true;
+    }
+
+    // Every allOf member must match, so one object constraint is sufficient.
+    return schema.allOf?.any((member) => _requiresObject(member, visited)) ??
+        false;
+  }
+
+  /// Returns whether a schema accepts JSON null, or null if undetermined.
+  bool? _schemaAllowsNull(Schema schema, Set<Schema> visiting) {
+    final canonical = _canonicalSchema(schema);
+    if (!visiting.add(canonical)) return null;
+    try {
+      final allowsNullType =
+          schema.isNullable ?? (schema.type.isEmpty || schema.hasNullType);
+      if (!allowsNullType ||
+          schema.isBooleanSchema == false ||
+          schema.enumerated?.contains(null) == false) {
+        return false;
+      }
+      if (schema.not != null) return null;
+
+      bool? allowsNull(Schema member) => _schemaAllowsNull(member, visiting);
+
+      if (schema.ref != null) {
+        final target = resolveSchemaReference(schema);
+        if (target == null) return null;
+        final accepted = allowsNull(target);
+        if (accepted != true) return accepted;
+      }
+      if (schema.allOf case final members?) {
+        final results = members.map(allowsNull).toSet();
+        if (results.contains(false)) return false;
+        if (results.isEmpty || results.contains(null)) return null;
+      }
+      if (schema.anyOf case final members?) {
+        final results = members.map(allowsNull).toSet();
+        if (!results.contains(true)) {
+          return results.contains(null) ? null : false;
+        }
+      }
+      if (schema.oneOf case final members?) {
+        final results = members.map(allowsNull).toList();
+        if (results.contains(null)) return null;
+        return results.where((accepted) => accepted == true).length == 1;
+      }
+      return true;
+    } finally {
+      visiting.remove(canonical);
+    }
   }
 
   /// Populates a oneOf shell's models.
@@ -1092,6 +1172,14 @@ class ModelImporter._(
       );
     }
 
+    shell.properties = _importProperties(name, schema, context);
+  }
+
+  List<Property> _importProperties(
+    String? name,
+    Schema schema,
+    Context context,
+  ) {
     final schemaProperties = schema.properties ?? {};
     final properties = <Property>[];
 
@@ -1114,7 +1202,7 @@ class ModelImporter._(
         name: propertyName,
         model: importPropertySchema(
           propertySchema,
-          context.pushAll([name, contextPropertyName]),
+          context.pushAll([name, contextPropertyName].whereType<String>()),
         ),
         isRequired: schema.required?.contains(propertyName) ?? false,
         isNullable: isNullable,
@@ -1134,7 +1222,7 @@ class ModelImporter._(
       properties.add(property);
     }
 
-    shell.properties = properties;
+    return properties;
   }
 
   /// Imports a schema from outside the components.schemas context.
@@ -1546,7 +1634,7 @@ class ModelImporter._(
       return _annotateSchemaValue(name, model, schema, context);
     }
 
-    if (schema.allOf != null || _hasAnyOfObjectSiblings(schema)) {
+    if (schema.allOf != null || _hasObjectUnionSiblings(schema)) {
       return _parseAllOf(name, schema, context);
     }
 
@@ -1802,27 +1890,7 @@ class ModelImporter._(
       _registerModel(allOfModel, schema);
     }
 
-    if (_hasAnyOfObjectSiblings(schema)) {
-      _populateAnyOfObjectSiblings(name, schema, context, allOfModel);
-      return allOfModel;
-    }
-
-    allOfModel.additionalPropertiesPolicy = importAdditionalProperties(
-      schema,
-      modelContext,
-    );
-
-    final resolvedModels = <Model>[];
-    for (final allOfSchema in schema.allOf!) {
-      final member = _resolveCompositeSubModel(
-        allOfSchema,
-        modelContext,
-        allOfModel,
-      );
-      if (member != null) resolvedModels.add(member);
-    }
-
-    allOfModel.models = resolvedModels;
+    _populateAllOfShell(schema, allOfModel);
 
     return allOfModel;
   }
@@ -1846,6 +1914,7 @@ class ModelImporter._(
     Schema schema,
     Context context, {
     bool cacheSchema = true,
+    Model? enclosingModel,
   }) {
     final modelContext = context.push(name ?? 'oneOf');
     final alternatives = schema.oneOf!;
@@ -1885,7 +1954,7 @@ class ModelImporter._(
       final member = _resolveCompositeSubModel(
         oneOfSchema,
         modelContext,
-        oneOfModel,
+        enclosingModel ?? oneOfModel,
       );
       if (member != null) {
         resolvedModels.add((
@@ -2186,13 +2255,10 @@ class ModelImporter._(
     Context context, {
     bool cacheSchema = true,
   }) {
-    final schemaProperties = schema.properties ?? {};
-    final properties = <Property>[];
-
     final model = ClassModel(
       isDeprecated: schema.isDeprecated ?? false,
       name: name,
-      properties: properties,
+      properties: <Property>[],
       context: context,
       description: schema.description,
       additionalPropertiesPolicy: null,
@@ -2219,50 +2285,9 @@ class ModelImporter._(
       _registerModel(model, cacheSchema ? schema : null);
     }
 
-    model.additionalPropertiesPolicy = importAdditionalProperties(
-      schema,
-      context,
-    );
-
-    for (final MapEntry(key: propertyName, value: propertySchema)
-        in schemaProperties.entries) {
-      final isNullable =
-          propertySchema.isNullable ?? propertySchema.hasNullType;
-      final isDeprecated = propertySchema.isDeprecated ?? false;
-      final (:isReadOnly, :isWriteOnly) = _propertyAccessFlags(propertySchema);
-      final description = propertySchema.description;
-      final nameOverride = propertySchema.xDartName;
-
-      // Empty property names need a placeholder so the context path remains
-      // valid.
-      final contextPropertyName = propertyName.trim().isEmpty
-          ? 'property'
-          : propertyName;
-
-      final property = Property(
-        name: propertyName,
-        model: importPropertySchema(
-          propertySchema,
-          context.pushAll([name, contextPropertyName].whereType<String>()),
-        ),
-        isRequired: schema.required?.contains(propertyName) ?? false,
-        isNullable: isNullable,
-        isDeprecated: isDeprecated,
-        isReadOnly: isReadOnly,
-        isWriteOnly: isWriteOnly,
-        description: description,
-        defaultValue: propertySchema.rawDefault,
-        examples: exampleImporter.fromSchema(propertySchema),
-        nameOverride: null,
-      );
-
-      if (nameOverride != null) {
-        property.nameOverride = nameOverride;
-      }
-
-      properties.add(property);
-    }
-
+    model
+      ..additionalPropertiesPolicy = importAdditionalProperties(schema, context)
+      ..properties = _importProperties(name, schema, context);
     return model;
   }
 

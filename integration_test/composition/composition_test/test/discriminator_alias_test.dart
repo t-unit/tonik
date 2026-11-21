@@ -19,6 +19,18 @@ void main() {
     expect(shape.toJson(), {'shapeType': 'box', 'side': 2});
   });
 
+  test('object oneOf preserves an enclosing discriminator alias', () {
+    final contact = ContactWithKind.fromJson(const {
+      'kind': 'e-mail',
+      'address': 'person@example.com',
+    });
+
+    expect(contact.toJson(), {
+      'kind': 'e-mail',
+      'address': 'person@example.com',
+    });
+  });
+
   test('oneOf decodes an alias from simple encoding', () {
     final shape = AliasedShape.fromSimple(
       'shapeType=box,side=2',
