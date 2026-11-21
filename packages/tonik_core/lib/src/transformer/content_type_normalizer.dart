@@ -117,6 +117,7 @@ class const ContentTypeNormalizer() {
           result = ResponseAlias(
             name: response.name,
             context: response.context,
+            summary: response.summary,
             description: response.description,
             response: normalized,
           );
@@ -137,6 +138,7 @@ class const ContentTypeNormalizer() {
           result = ResponseObject(
             name: response.name,
             context: response.context,
+            summary: response.summary,
             description: response.description,
             headers: response.headers,
             bodies: normalizedBodies,

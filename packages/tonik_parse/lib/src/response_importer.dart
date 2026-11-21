@@ -84,6 +84,7 @@ class ResponseImporter({
           name: name,
           response: referencedResponse,
           context: context,
+          summary: wrapper.summary,
           description: wrapper.description,
         );
 
@@ -188,6 +189,7 @@ class ResponseImporter({
 
           response = core.ResponseObject(
             name: name,
+            summary: responseObj.summary,
             description: responseObj.description,
             headers: headers,
             bodies: bodies.toSet(),
@@ -196,6 +198,7 @@ class ResponseImporter({
         } else {
           response = core.ResponseObject(
             name: name,
+            summary: responseObj.summary,
             description: responseObj.description,
             headers: headers,
             bodies: const {},

@@ -6,6 +6,10 @@ sealed class const Response({
   required final String? name,
   required final Context context,
 }) {
+  /// The summary of the response.
+  /// For aliases, this may override the referenced response's summary.
+  String? get summary;
+
   /// The description of the response.
   /// For aliases, this may override the referenced response's description.
   String? get description;
@@ -29,6 +33,7 @@ class const ResponseAlias({
   required final Response response,
   required super.context,
   @override required final String? description,
+  @override final String? summary,
 }) extends Response {
   @override
   bool get isEmpty => response.isEmpty;
@@ -49,16 +54,18 @@ class const ResponseAlias({
           runtimeType == other.runtimeType &&
           name == other.name &&
           response == other.response &&
+          summary == other.summary &&
           description == other.description &&
           context == other.context;
 
   @override
-  int get hashCode => Object.hash(name, response, description, context);
+  int get hashCode =>
+      Object.hash(name, response, summary, description, context);
 
   @override
   String toString() =>
       'ResponseAlias(name: $name, response: $response, '
-      'description: $description)';
+      'summary: $summary, description: $description)';
 }
 
 @immutable
@@ -66,8 +73,9 @@ class const ResponseObject({
   required super.name,
   required super.context,
   required final Map<String, ResponseHeader> headers,
-  @override required final String description,
   required final Set<ResponseBody> bodies,
+  @override final String? summary,
+  @override final String? description,
 }) extends Response {
   @override
   bool get isEmpty => bodies.isEmpty && headers.isEmpty;
@@ -92,6 +100,7 @@ class const ResponseObject({
           other.headers,
         ) &&
         bodies == other.bodies &&
+        summary == other.summary &&
         description == other.description;
   }
 
@@ -101,13 +110,14 @@ class const ResponseObject({
     context,
     const MapEquality<String, ResponseHeader>().hash(headers),
     bodies,
+    summary,
     description,
   );
 
   @override
   String toString() =>
       'ResponseObject(name: $name, context: $context, headers: $headers, '
-      'description: $description, bodies: $bodies)';
+      'summary: $summary, description: $description, bodies: $bodies)';
 }
 
 enum ResponseDelivery() {
