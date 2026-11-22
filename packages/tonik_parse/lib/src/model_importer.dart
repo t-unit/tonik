@@ -46,12 +46,6 @@ class ModelImporter._(
   final _additionalProperties =
       <(Schema, Context), AdditionalPropertiesPolicy>{};
 
-  /// Set of named schemas whose composite shells have been populated.
-  ///
-  /// Used during pass 2 to determine whether a referenced model's composite
-  /// sub-models have already been filled in (and thus can be checked for
-  /// back-edges).
-  final Set<String> _populatedComposites = {};
   final _unpopulatedAliases = Set<AliasModel>.identity();
 
   late Set<Model> models;
@@ -132,7 +126,6 @@ class ModelImporter._(
     _placeholders.clear();
     _propertyModels.clear();
     _additionalProperties.clear();
-    _populatedComposites.clear();
     _unpopulatedAliases.clear();
     _schemaReferences.clear();
     _schemaAliases.clear();
@@ -807,17 +800,9 @@ class ModelImporter._(
     final alternatives = schema.allOf;
     if (alternatives == null) {
       _populateObjectUnionSiblings(schema, shell);
-    } else {
-      _populateAllOfMembers(schema, shell, alternatives);
+      return;
     }
-    if (shell.name case final name?) _populatedComposites.add(name);
-  }
 
-  void _populateAllOfMembers(
-    Schema schema,
-    AllOfModel shell,
-    List<Schema> alternatives,
-  ) {
     final modelContext = shell.context;
     shell.additionalPropertiesPolicy = importAdditionalProperties(
       schema,
@@ -959,8 +944,6 @@ class ModelImporter._(
     }
     shell.models = resolvedModels;
 
-    _populatedComposites.add(name);
-
     // Nested composite members enter the global model set after resolution.
     for (final nestedModel in shell.models) {
       _addModelToSet(nestedModel.model);
@@ -1005,8 +988,6 @@ class ModelImporter._(
       }
     }
     shell.models = resolvedModels;
-
-    _populatedComposites.add(name);
   }
 
   /// Resolves a sub-model for a composite (oneOf/allOf/anyOf) shell.
@@ -1155,24 +1136,28 @@ class ModelImporter._(
 
   /// Populates a ClassModel shell.
   void _populateClassShell(
-    String name,
+    String? name,
     Schema schema,
     Context context,
-    ClassModel shell,
-  ) {
+    ClassModel shell, {
+    bool warnAboutNot = true,
+  }) {
     shell.additionalPropertiesPolicy = importAdditionalProperties(
       schema,
       context,
     );
 
+    if (warnAboutNot) _warnAboutUnsupportedNot(name, schema);
+    shell.properties = _importProperties(name, schema, context);
+  }
+
+  void _warnAboutUnsupportedNot(String? name, Schema schema) {
     if (schema.not != null) {
       log.warning(
         'Found not schema for $name. The not keyword is not '
         'supported and will be ignored.',
       );
     }
-
-    shell.properties = _importProperties(name, schema, context);
   }
 
   List<Property> _importProperties(
@@ -2271,13 +2256,7 @@ class ModelImporter._(
       nameOverride: null,
     );
 
-    if (schema.not != null) {
-      log.warning(
-        'Found not schema for $name. The not keyword is not '
-        'supported and will be ignored.',
-      );
-    }
-
+    _warnAboutUnsupportedNot(name, schema);
     if (name == null || _findNamedModel(name, schema) == null) {
       // Recursive properties need the model registered before property
       // parsing.
@@ -2285,9 +2264,7 @@ class ModelImporter._(
       _registerModel(model, cacheSchema ? schema : null);
     }
 
-    model
-      ..additionalPropertiesPolicy = importAdditionalProperties(schema, context)
-      ..properties = _importProperties(name, schema, context);
+    _populateClassShell(name, schema, context, model, warnAboutNot: false);
     return model;
   }
 

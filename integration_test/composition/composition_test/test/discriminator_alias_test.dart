@@ -1,5 +1,6 @@
 import 'package:composition_api/composition_api.dart';
 import 'package:test/test.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   test('oneOf decodes the canonical mapping value', () {
@@ -19,16 +20,28 @@ void main() {
     expect(shape.toJson(), {'shapeType': 'box', 'side': 2});
   });
 
-  test('object oneOf preserves an enclosing discriminator alias', () {
+  test('object oneOf preserves enclosing fields and the alias', () {
     final contact = ContactWithKind.fromJson(const {
       'kind': 'e-mail',
+      'name': 'Lee',
       'address': 'person@example.com',
     });
 
     expect(contact.toJson(), {
       'kind': 'e-mail',
+      'name': 'Lee',
       'address': 'person@example.com',
     });
+  });
+
+  test('object oneOf requires the enclosing name', () {
+    expect(
+      () => ContactWithKind.fromJson(const {
+        'kind': 'e-mail',
+        'address': 'person@example.com',
+      }),
+      throwsA(isA<DecodingException>()),
+    );
   });
 
   test('oneOf decodes an alias from simple encoding', () {
